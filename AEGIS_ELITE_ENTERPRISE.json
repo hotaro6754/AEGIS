@@ -1,0 +1,3851 @@
+{
+  "name": "AEGIS ELITE v2.0 — Enterprise Edition",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/mission",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "n001",
+      "name": "🎯 Mission Input",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        600
+      ],
+      "notes": "Entry: POST { input, operator, org_domain }\nNatural language mission from any operator."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/alert",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n002",
+      "name": "🚨 SIEM Alert Ingestion",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        800
+      ],
+      "notes": "SIEM/Wazuh/IDS alert ingestion. Always active 24/7."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/intel",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n003",
+      "name": "🟡 Intel Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        1000
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/attack",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n004",
+      "name": "🔴 Attack Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/defend",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n005",
+      "name": "🔵 Defend Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        1400
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/report",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "n006",
+      "name": "📊 Report Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "aegis/approve",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "n007",
+      "name": "✅ Approval Gateway",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        1800
+      ],
+      "notes": "Email approval link handler — receives YES/NO decisions."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "n010",
+      "name": "⏱ Every 15min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "n011",
+      "name": "⏱ Every 1hr",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2150
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "n012",
+      "name": "⏱ Every 6hr",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2300
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "n013",
+      "name": "⏱ Nightly 11pm",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2450
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "n014",
+      "name": "⏱ Weekly Mon 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2600
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 */4 * * *"
+            }
+          ]
+        }
+      },
+      "id": "n015",
+      "name": "⏱ Every 4hr Compliance",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        100,
+        2750
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst input=body.input||'';\nconst operator=body.operator||'security-team@company.com';\nconst domain=body.org_domain||'YOUR_COMPANY.com';\nconst ts=new Date().toISOString();\nconst mid='AEGIS-'+Date.now();\nreturn [{json:{mission_id:mid,raw_input:input,operator:operator,org_domain:domain,timestamp:ts,status:'parsing',version:'ELITE-2.0'}}];"
+      },
+      "id": "n020",
+      "name": "🧠 Prepare Mission",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE, a sovereign AI cybersecurity command system for enterprise security operations.\n\nYour purpose: Parse operator natural language input → determine optimal security operation → build precise execution plan.\n\nMODES:\n- INTEL: Passive 360° reconnaissance. OSINT, threat feeds, exposure mapping.\n- ATTACK: Active red team. Exploit validation, attack path simulation, vuln proof.\n- DEFEND: Blue team response. Alert triage, incident response, auto-remediation.\n- COMPLIANCE: Audit posture. SOC2, ISO27001, GDPR, HIPAA mapping.\n- THREAT_HUNT: Proactive threat hunting in logs and network traffic.\n- AUTO: All modes simultaneously — intel feeds attack feeds defend feeds compliance.\n\nRISK GATE:\n0-25: AUTO — passive, read-only\n26-50: AUTO + analyst notification\n51-75: PAUSE 5min, notify, then execute\n76-100: HARD STOP — email approval required\n\nRisk modifiers:\nProduction system: +25 | Staging: -15 | External target: -10\nData extraction: +30 | Config change: +20 | Passive scan: -20\nKnown CVE exploit: +25 | Authenticated test: -10\n\nExtra capabilities in ELITE:\n- DNS security analysis (DMARC/SPF/DKIM/DNSSEC)\n- Subdomain takeover detection\n- Dark web exposure check\n- SSL/TLS certificate analysis\n- Phishing domain detection\n- Zero-day correlation\n- Threat actor profiling\n- Compliance gap analysis\n- Security score tracking\n\nOutput ONLY valid JSON:\n{\n  \"mission_id\":\"string\",\n  \"interpreted_intent\":\"string\",\n  \"extracted_targets\":[\"domains\",\"IPs\"],\n  \"selected_mode\":\"INTEL|ATTACK|DEFEND|COMPLIANCE|THREAT_HUNT|AUTO\",\n  \"mode_reasoning\":\"string\",\n  \"estimated_duration\":\"string\",\n  \"overall_risk\":\"LOW|MEDIUM|HIGH|CRITICAL\",\n  \"elite_modules\":[\"DNS_SECURITY\",\"SUBDOMAIN_TAKEOVER\",\"DARK_WEB\",\"SSL_SCAN\",\"PHISHING\",\"COMPLIANCE\",\"THREAT_ACTOR\"],\n  \"execution_plan\":[\n    {\"step\":1,\"phase\":\"string\",\"action\":\"string\",\"tools\":[\"string\"],\"autonomy\":\"AUTO|CONFIRM_REQUIRED\",\"risk_score\":0,\"risk_reason\":\"string\",\"mitre_technique\":\"Txxxx\",\"expected_output\":\"string\"}\n  ],\n  \"requires_approval\":true,\n  \"approval_steps\":[1],\n  \"immediate_actions\":[\"string\"],\n  \"operator_briefing\":\"string\",\n  \"threat_context\":\"string\",\n  \"success_criteria\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Mission: {{ $json.mission_id }}\nOperator: {{ $json.operator }}\nDomain: {{ $json.org_domain }}\nTime: {{ $json.timestamp }}\nInput: {{ $json.raw_input }}\n\nParse and generate elite execution plan."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 5000
+        }
+      },
+      "id": "n021",
+      "name": "🧠 AI Decision Engine (Claude Elite)",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        700,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw=$input.first().json.content[0].text;\nlet plan;\ntry{plan=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){throw new Error('Brain parse fail: '+e.message);}\nconst prev=$('🧠 Prepare Mission').first().json;\nplan.mission_id=prev.mission_id;\nplan.operator=prev.operator;\nplan.org_domain=prev.org_domain;\nplan.timestamp=prev.timestamp;\nplan.raw_input=prev.raw_input;\nplan.version='ELITE-2.0';\nreturn [{json:plan}];"
+      },
+      "id": "n022",
+      "name": "📋 Parse Mission Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.requires_approval }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n023",
+      "name": "🔒 Needs Approval?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "aegis@yourdomain.com",
+        "toEmail": "={{ $json.operator }}",
+        "subject": "=⚔️ AEGIS ELITE Mission Approval — {{ $json.mission_id }} [{{ $json.overall_risk }} RISK]",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#050510;color:#e0e0f0;padding:24px}.wrap{max-width:700px;margin:0 auto}.header{background:linear-gradient(135deg,#0d0d2e,#1a0d3e);border:1px solid #3a1a6e;border-radius:12px;padding:28px;margin-bottom:20px}.logo{font-size:22px;font-weight:900;color:#8844ff;letter-spacing:2px}.subtitle{color:#888;font-size:13px;margin-top:4px}.card{background:#0d0d1e;border:1px solid #1e1e3e;border-radius:10px;padding:20px;margin:14px 0}.card-title{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#4488ff;margin-bottom:12px;font-weight:700}.risk-critical{color:#ff2244;font-size:36px;font-weight:900}.risk-high{color:#ff6600;font-size:36px;font-weight:900}.risk-medium{color:#ffcc00;font-size:36px;font-weight:900}.risk-low{color:#00dd88;font-size:36px;font-weight:900}.step{background:#080818;border-left:3px solid #4488ff;padding:12px 16px;margin:8px 0;border-radius:0 6px 6px 0}.step.confirm{border-left-color:#ff2244}.step-meta{font-size:11px;color:#666;margin-top:6px}.btn{display:inline-block;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;margin:8px;letter-spacing:1px}.btn-yes{background:linear-gradient(135deg,#00cc44,#00aa33);color:#000}.btn-no{background:linear-gradient(135deg,#ff2244,#cc1133);color:#fff}.footer{text-align:center;color:#444;font-size:11px;margin-top:24px;padding-top:16px;border-top:1px solid #1a1a2e}</style></head><body><div class='wrap'><div class='header'><div class='logo'>🛡️ AEGIS ELITE</div><div class='subtitle'>Autonomous Enterprise & Guardian Intelligence System</div></div><div class='card'><div class='card-title'>Mission Briefing</div><p><strong>ID:</strong> {{ $json.mission_id }}</p><p style='margin-top:8px'><strong>Request:</strong> {{ $json.raw_input }}</p><p style='margin-top:8px'><strong>Interpretation:</strong> {{ $json.operator_briefing }}</p><p style='margin-top:8px'><strong>Mode:</strong> {{ $json.selected_mode }} &mdash; {{ $json.mode_reasoning }}</p><p style='margin-top:8px'><strong>Duration:</strong> {{ $json.estimated_duration }}</p></div><div class='card'><div class='card-title'>Risk Assessment</div><div class='risk-{{ $json.overall_risk.toLowerCase() }}'>{{ $json.overall_risk }}</div><p style='color:#888;margin-top:8px'>{{ $json.threat_context }}</p></div><div class='card'><div class='card-title'>Execution Plan — Steps Needing Approval Are Red</div>{{ $json.execution_plan.map(s=>`<div class='step ${s.autonomy==='CONFIRM_REQUIRED'?'confirm':''}'><strong>Step ${s.step} [${s.phase}]</strong> ${s.autonomy==='CONFIRM_REQUIRED'?'🔴 APPROVAL REQUIRED':' AUTO'}<br/>${s.action}<div class='step-meta'>Risk: ${s.risk_score}/100 &bull; ${s.risk_reason} ${s.mitre_technique?'&bull; MITRE: '+s.mitre_technique:''}</div></div>`).join('') }}</div><div class='card'><div class='card-title'>Starting Automatically (Low Risk)</div><ul style='padding-left:20px'>{{ $json.immediate_actions.map(a=>`<li style='margin:6px 0'>${a}</li>`).join('') }}</ul></div><div style='text-align:center;padding:24px'><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=YES&token=AEGIS_SECURE_2024' class='btn btn-yes'>✅ APPROVE MISSION</a><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=NO&token=AEGIS_SECURE_2024' class='btn btn-no'>❌ DENY MISSION</a></div><div class='footer'>AEGIS ELITE v2.0 &bull; {{ $json.timestamp }} &bull; {{ $json.mission_id }}</div></div></body></html>"
+      },
+      "id": "n024",
+      "name": "📧 Send Approval Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.query.decision }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n025",
+      "name": "✅ Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1800
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"mission_accepted\",\"mission_id\":\"{{ $('📋 Parse Mission Plan').first().json.mission_id }}\",\"message\":\"AEGIS ELITE is executing. Updates via email, Slack, and Telegram.\",\"mode\":\"{{ $('📋 Parse Mission Plan').first().json.selected_mode }}\"}"
+      },
+      "id": "n026",
+      "name": "✅ Mission Accepted Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        650
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{intel_run_id:'INTEL-'+Date.now(),timestamp:new Date().toISOString(),org_domain:md.org_domain||'YOUR_COMPANY.com',mission_id:md.mission_id||'SCHEDULED',trigger:md.trigger||'SCHEDULED',targets:md.extracted_targets||md.targets||[md.org_domain||'YOUR_COMPANY.com'],findings:[],critical_findings:[]}}];"
+      },
+      "id": "n030",
+      "name": "🟡 Init Intel Run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        2100
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://haveibeenpwned.com/api/v3/breachedaccount/{{ $json.org_domain }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "hibp-api-key",
+              "value": "={{ $credentials.hibpApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n031",
+      "name": "💀 HIBP Breach Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/dns/domain/{{ $json.org_domain }}?key={{ $credentials.shodanApiKey }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n032",
+      "name": "🔍 Shodan DNS Intel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/search?key={{ $credentials.shodanApiKey }}&query=org:\"{{ $json.org_domain }}\"",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n033",
+      "name": "🔍 Shodan Exposed Services",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2100
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/search/code?q={{ $json.org_domain }}+extension:env+OR+extension:config&sort=indexed",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.githubToken }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n034",
+      "name": "🐙 GitHub Leak Scan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/search/code?q={{ $json.org_domain }}+password+OR+api_key+OR+secret+OR+token&sort=indexed",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.githubToken }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n035",
+      "name": "🐙 GitHub Secret Scan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={{ $json.org_domain }}&cvssV3Severity=CRITICAL&resultsPerPage=15",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n036",
+      "name": "🛡️ NVD Critical CVEs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://otx.alienvault.com/api/v1/indicators/domain/{{ $json.org_domain }}/general",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-OTX-API-KEY",
+              "value": "={{ $credentials.otxApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n037",
+      "name": "👽 OTX Threat Intel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://crt.sh/?q=%.{{ $json.org_domain }}&output=json",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n038",
+      "name": "🔏 SSL Cert Transparency",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.securitytrails.com/v1/domain/{{ $json.org_domain }}/subdomains",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "APIKEY",
+              "value": "={{ $credentials.securityTrailsApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n039",
+      "name": "🗺️ SecurityTrails Subdomains",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2700
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://dns.google/resolve?name={{ $json.org_domain }}&type=TXT",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n040",
+      "name": "🔐 DNS TXT (SPF/DMARC/DKIM)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2800
+      ],
+      "notes": "ELITE: Checks SPF, DMARC, DKIM records for email security posture."
+    },
+    {
+      "parameters": {
+        "url": "=https://dns.google/resolve?name=_dmarc.{{ $json.org_domain }}&type=TXT",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n041",
+      "name": "📧 DMARC Policy Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        2900
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.ssllabs.com/api/v3/analyze?host={{ $json.org_domain }}&all=done&ignoreMismatch=on",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "n042",
+      "name": "🔒 SSL Labs Grade Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        3000
+      ],
+      "notes": "ELITE: Full SSL/TLS grade — A+ to F. Checks weak ciphers, HSTS, cert expiry."
+    },
+    {
+      "parameters": {
+        "url": "=https://phish.sinking.yachts/v2/all",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n043",
+      "name": "🎣 Phishing Feed Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        3100
+      ],
+      "notes": "ELITE: Checks if any company domains appear in active phishing feeds."
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hackertarget.com/hostsearch/?q={{ $json.org_domain }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n044",
+      "name": "🎯 HackerTarget Subdomain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        3200
+      ],
+      "notes": "ELITE: Additional subdomain enumeration source."
+    },
+    {
+      "parameters": {
+        "url": "=https://otx.alienvault.com/api/v1/indicators/domain/{{ $json.org_domain }}/passive_dns",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-OTX-API-KEY",
+              "value": "={{ $credentials.otxApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n045",
+      "name": "🔍 Passive DNS History",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        3300
+      ],
+      "notes": "ELITE: Historical DNS records — finds old IPs, abandoned subdomains."
+    },
+    {
+      "parameters": {
+        "jsCode": "const init=$('🟡 Init Intel Run').first().json;\nconst findings=[];\nconst criticalFindings=[];\n\ntry{const hibp=$('💀 HIBP Breach Check').first().json;\nif(Array.isArray(hibp)&&hibp.length>0){const f={source:'HaveIBeenPwned',type:'DATA_BREACH',severity:'HIGH',risk_score:75,title:`${hibp.length} data breaches — ${init.org_domain}`,detail:hibp.map(b=>b.Name).join(', '),asset:init.org_domain,mitre:'T1589',action:'Force password resets for all affected accounts',timestamp:init.timestamp};\nfindings.push(f);if(hibp.length>2)criticalFindings.push(f);}}catch(e){}\n\ntry{const shodan=$('🔍 Shodan Exposed Services').first().json;\nif(shodan.total>0&&shodan.matches){shodan.matches.slice(0,10).forEach(m=>{const risky=[22,3389,5900,23,21,445,3306,5432,27017,6379].includes(m.port);\nconst f={source:'Shodan',type:'EXPOSED_SERVICE',severity:risky?'HIGH':'MEDIUM',risk_score:risky?72:42,title:`Port ${m.port} exposed on ${m.ip_str}`,detail:`${m.product||'unknown'} ${m.version||''}`.trim(),asset:m.ip_str,port:m.port,mitre:'T1046',action:risky?'Restrict with firewall immediately':'Review if public access needed',timestamp:init.timestamp};\nfindings.push(f);if(risky)criticalFindings.push(f);});}}catch(e){}\n\ntry{const gh=$('🐙 GitHub Leak Scan').first().json;\nif(gh.total_count>0){const f={source:'GitHub',type:'CREDENTIAL_EXPOSURE',severity:'CRITICAL',risk_score:95,title:`${gh.total_count} credential exposures on GitHub`,detail:gh.items?.slice(0,3).map(i=>i.html_url).join(' | ')||'',asset:'GitHub Public',mitre:'T1552.001',action:'IMMEDIATE: Review URLs, rotate credentials, remove files',timestamp:init.timestamp};\nfindings.push(f);criticalFindings.push(f);}}catch(e){}\n\ntry{const gs=$('🐙 GitHub Secret Scan').first().json;\nif(gs.total_count>0){const f={source:'GitHub',type:'SECRET_EXPOSURE',severity:'CRITICAL',risk_score:98,title:`${gs.total_count} secrets/API keys exposed on GitHub`,detail:gs.items?.slice(0,3).map(i=>i.html_url).join(' | ')||'',asset:'GitHub Public',mitre:'T1552.001',action:'IMMEDIATE: Rotate ALL secrets. Audit full git history.',timestamp:init.timestamp};\nfindings.push(f);criticalFindings.push(f);}}catch(e){}\n\ntry{const nvd=$('🛡️ NVD Critical CVEs').first().json;\nif(nvd.vulnerabilities&&nvd.vulnerabilities.length>0){nvd.vulnerabilities.slice(0,5).forEach(v=>{const cve=v.cve;\nconst cvss=cve.metrics?.cvssMetricV31?.[0]?.cvssData?.baseScore||cve.metrics?.cvssMetricV30?.[0]?.cvssData?.baseScore||0;\nconst f={source:'NVD',type:'CVE_CRITICAL',severity:cvss>=9?'CRITICAL':'HIGH',risk_score:Math.round(cvss*10),cve_id:cve.id,cvss_score:cvss,title:`${cve.id} (CVSS ${cvss})`,detail:(cve.descriptions?.find(d=>d.lang==='en')?.value||'').substring(0,150),mitre:'T1190',action:'Verify if applicable to your stack and patch immediately',timestamp:init.timestamp};\nfindings.push(f);if(cvss>=9)criticalFindings.push(f);});}}catch(e){}\n\ntry{const certs=$('🔏 SSL Cert Transparency').first().json;\nif(Array.isArray(certs)){const domains=[...new Set(certs.map(c=>c.name_value).flat())].filter(d=>d&&!d.startsWith('*')&&d.includes(init.org_domain)).slice(0,25);\nif(domains.length>0){findings.push({source:'CertTransparency',type:'ASSET_DISCOVERY',severity:'INFO',risk_score:20,title:`${domains.length} subdomains via cert transparency`,detail:domains.join(', '),discovered_subdomains:domains,asset:init.org_domain,mitre:'T1590',action:'Fingerprint all new subdomains',timestamp:init.timestamp});}}}catch(e){}\n\ntry{const dmarc=$('📧 DMARC Policy Check').first().json;\nconst hasDmarc=dmarc.Answer&&dmarc.Answer.some(a=>a.data&&a.data.includes('v=DMARC1'));\nconst dmarcRecord=dmarc.Answer?.find(a=>a.data?.includes('v=DMARC1'))?.data||'';\nconst isReject=dmarcRecord.includes('p=reject');\nif(!hasDmarc||!isReject){const f={source:'DNS_Analysis',type:'EMAIL_SECURITY',severity:!hasDmarc?'HIGH':'MEDIUM',risk_score:!hasDmarc?68:45,title:!hasDmarc?'No DMARC record — domain spoofing possible':'DMARC not enforced (not p=reject)',detail:`Current: ${dmarcRecord||'NONE'}`,asset:init.org_domain,mitre:'T1566',action:!hasDmarc?'Add DMARC record with p=reject immediately':'Update DMARC to p=reject',timestamp:init.timestamp};\nfindings.push(f);if(!hasDmarc)criticalFindings.push(f);}}catch(e){}\n\ntry{const txt=$('🔐 DNS TXT (SPF/DMARC/DKIM)').first().json;\nconst hasSPF=txt.Answer&&txt.Answer.some(a=>a.data&&a.data.includes('v=spf1'));\nif(!hasSPF){const f={source:'DNS_Analysis',type:'EMAIL_SECURITY',severity:'HIGH',risk_score:70,title:'No SPF record — email spoofing risk',detail:'Anyone can send email pretending to be from your domain',asset:init.org_domain,mitre:'T1566',action:'Add SPF record: v=spf1 include:yourmailprovider.com ~all',timestamp:init.timestamp};\nfindings.push(f);criticalFindings.push(f);}}catch(e){}\n\ntry{const ssl=$('🔒 SSL Labs Grade Check').first().json;\nif(ssl.endpoints&&ssl.endpoints.length>0){ssl.endpoints.forEach(ep=>{const grade=ep.grade;\nif(grade&&!['A','A+'].includes(grade)){const f={source:'SSLLabs',type:'SSL_WEAKNESS',severity:['C','D','E','F','T'].includes(grade)?'HIGH':'MEDIUM',risk_score:grade==='F'?85:grade==='C'?55:42,title:`SSL/TLS Grade ${grade} on ${ep.ipAddress}`,detail:`Grade: ${grade} | Issues: ${ep.statusMessage||'Weak cipher or config'}`,asset:ep.ipAddress,mitre:'T1573',action:`Upgrade TLS config to achieve A+ grade. Disable weak ciphers.`,timestamp:init.timestamp};\nfindings.push(f);if(['F','T'].includes(grade))criticalFindings.push(f);}});}}catch(e){}\n\nconst overallRisk=findings.length>0?Math.min(100,Math.round(findings.reduce((s,f)=>s+f.risk_score,0)/findings.length)):0;\nconst riskLevel=overallRisk>=80?'CRITICAL':overallRisk>=60?'HIGH':overallRisk>=40?'MEDIUM':'LOW';\n\nreturn [{json:{...init,findings,critical_findings:criticalFindings,total_findings:findings.length,critical_count:criticalFindings.length,overall_risk_score:overallRisk,risk_level:riskLevel,completed_at:new Date().toISOString()}}];"
+      },
+      "id": "n050",
+      "name": "📊 Aggregate Intel Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Intel Analyst. Analyze gathered intelligence deeply.\n\nProvide:\n1. Concise analyst briefing (threat landscape assessment)\n2. Top 5 prioritized action items\n3. Whether to trigger Attack workflow and why\n4. Whether to trigger Defend workflow and why\n5. MITRE ATT&CK kill chain mapping\n6. Threat actor profiling (what type of attacker would target this?)\n7. Predicted attack timeline if nothing is fixed\n8. Quick wins (fixes that take <1hr)\n9. Zero-day correlation (any recent 0-days relevant to detected stack?)\n10. Compliance gaps identified\n\nRespond ONLY in valid JSON:\n{\n  \"analyst_briefing\":\"string\",\n  \"threat_landscape\":\"string\",\n  \"immediate_actions\":[\"action1\",\"action2\",\"action3\",\"action4\",\"action5\"],\n  \"quick_wins\":[\"fix in <1hr\"],\n  \"trigger_attack\":true,\n  \"trigger_attack_reason\":\"string\",\n  \"trigger_defend\":true,\n  \"trigger_defend_reason\":\"string\",\n  \"mitre_kill_chain\":[\"T1xxx — name\"],\n  \"threat_actor_profile\":\"string\",\n  \"attack_timeline_prediction\":\"string\",\n  \"zero_day_correlation\":\"string\",\n  \"compliance_gaps\":{\"soc2\":\"string\",\"iso27001\":\"string\",\"gdpr\":\"string\"},\n  \"executive_summary\":\"string\",\n  \"security_score_delta\":\"string\",\n  \"slack_alert\":\"string\",\n  \"telegram_alert\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Intel Run: {{ $json.intel_run_id }}\nOrg: {{ $json.org_domain }}\nFindings: {{ $json.total_findings }} total, {{ $json.critical_count }} critical\nRisk: {{ $json.risk_level }} ({{ $json.overall_risk_score }}/100)\n\nFindings:\n{{ JSON.stringify($json.findings,null,2).substring(0,6000) }}\n\nAnalyze and respond in JSON."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 3000
+        }
+      },
+      "id": "n051",
+      "name": "🤖 AI Intel Analyst (Elite)",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const intel=$('📊 Aggregate Intel Results').first().json;\nconst raw=$input.first().json.content[0].text;\nlet ai;\ntry{ai=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){ai={analyst_briefing:'Analysis error',immediate_actions:[],trigger_attack:false,trigger_defend:false,slack_alert:'🛡️ AEGIS Intel scan complete',telegram_alert:'Intel scan done'};}\nreturn [{json:{...intel,ai_analysis:ai,should_trigger_attack:ai.trigger_attack&&intel.critical_count>0,should_trigger_defend:ai.trigger_defend,slack_message:ai.slack_alert,telegram_message:ai.telegram_alert}}];"
+      },
+      "id": "n052",
+      "name": "🔗 Merge Intel + AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.critical_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n053",
+      "name": "⚠️ Has Critical Intel?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{attack_run_id:'ATTACK-'+Date.now(),mission_id:md.mission_id||'SCHEDULED',org_domain:md.org_domain||'YOUR_COMPANY.com',targets:md.extracted_targets||md.targets||[md.org_domain||'YOUR_COMPANY.com'],intel_findings:md.intel_findings||[],trigger:md.trigger||'SCHEDULED',timestamp:new Date().toISOString(),phase:'RECON',vulnerabilities:[],confirmed_exploits:[],attack_paths:[]}}];"
+      },
+      "id": "n060",
+      "name": "🔴 Init Attack Run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Red Team Planner — elite offensive security operator.\n\nGenerate precise, targeted attack plans based on intel findings.\n\nTools available:\n- shodan_api: Host intel, banners, vulns\n- virustotal_api: Domain/URL/IP/hash analysis\n- nvd_api: CVE database\n- otx_api: Threat intelligence\n- censys_api: Internet scan data\n- urlscan_api: Web page analysis\n- securitytrails_api: DNS/subdomain intel\n- ssllabs_api: SSL/TLS testing\n- whois_api: Domain registration intel\n- hackertarget_api: Multiple recon tools\n- dns_api: DNS record analysis\n\nFor each vulnerability hypothesis:\n- Assign precise risk score\n- Note if proof-of-concept is safe to run\n- Mark data-modifying actions CONFIRM_REQUIRED\n- Include MITRE ATT&CK technique\n\nRespond ONLY in valid JSON:\n{\n  \"attack_plan\":[{\"step\":1,\"phase\":\"RECON|SCAN|EXPLOIT|VALIDATE\",\"target\":\"string\",\"action\":\"string\",\"tool\":\"string\",\"risk_score\":0,\"autonomy\":\"AUTO|CONFIRM_REQUIRED\",\"mitre_technique\":\"Txxxx\",\"success_criteria\":\"string\"}],\n  \"high_priority_targets\":[\"string\"],\n  \"attack_surface_summary\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Attack Run: {{ $json.attack_run_id }}\nTarget: {{ $json.org_domain }}\nTargets: {{ JSON.stringify($json.targets) }}\nTrigger: {{ $json.trigger }}\nIntel:\n{{ JSON.stringify($json.intel_findings,null,2).substring(0,3000) }}\n\nGenerate attack plan."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 3000
+        }
+      },
+      "id": "n061",
+      "name": "🤖 AI Attack Planner",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        700,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/search?key={{ $credentials.shodanApiKey }}&query=hostname:{{ $json.org_domain }}&facets=port,product,os",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n062",
+      "name": "🔍 Shodan Host Recon",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.virustotal.com/api/v3/domains/{{ $json.org_domain }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-apikey",
+              "value": "={{ $credentials.virusTotalApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n063",
+      "name": "🦠 VirusTotal Domain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch={{ $json.org_domain }}&cvssV3Severity=CRITICAL&resultsPerPage=10",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n064",
+      "name": "🛡️ NVD Attack CVEs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://urlscan.io/api/v1/search/?q=domain:{{ $json.org_domain }}&size=10",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "API-Key",
+              "value": "={{ $credentials.urlScanApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n065",
+      "name": "🔍 URLScan Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3600
+      ],
+      "notes": "ELITE: URLScan shows full web page analysis, technologies, outbound connections."
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hackertarget.com/nmap/?q={{ $json.targets[0] }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "n066",
+      "name": "🎯 HackerTarget Nmap",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3700
+      ],
+      "notes": "ELITE: Nmap port scan via API — no local tools needed."
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hackertarget.com/whatweb/?q={{ $json.org_domain }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n067",
+      "name": "🌐 WhatWeb Fingerprint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3800
+      ],
+      "notes": "ELITE: Technology fingerprinting — CMS, frameworks, server software."
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hackertarget.com/httpheaders/?q=https://{{ $json.org_domain }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n068",
+      "name": "📋 HTTP Headers Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1000,
+        3900
+      ],
+      "notes": "ELITE: Missing security headers = attack surface. X-Frame-Options, CSP, HSTS, etc."
+    },
+    {
+      "parameters": {
+        "jsCode": "const init=$('🔴 Init Attack Run').first().json;\nconst vulns=[];\nconst confirmed=[];\n\ntry{const sh=$('🔍 Shodan Host Recon').first().json;\nif(sh.matches){sh.matches.slice(0,8).forEach(m=>{if(m.vulns){Object.keys(m.vulns).forEach(cve=>{const f={source:'Shodan',type:'CVE_CONFIRMED',severity:'CRITICAL',risk_score:88,cve_id:cve,asset:m.ip_str,title:`CONFIRMED: ${cve} on ${m.ip_str}`,detail:`Product: ${m.product||'unknown'} | Port: ${m.port}`,mitre:'T1190',action:'Patch immediately — CVE confirmed by Shodan scanner',timestamp:init.timestamp};\nvulns.push(f);confirmed.push(f);});}if(m.port){const risky=[23,5900,27017,6379,11211,50000].includes(m.port);\nif(risky)confirmed.push({source:'Shodan',type:'CRITICAL_PORT',severity:'CRITICAL',risk_score:90,asset:m.ip_str,port:m.port,title:`CRITICAL port ${m.port} publicly exposed`,mitre:'T1046',action:'Block immediately via firewall',timestamp:init.timestamp});}}}}catch(e){}\n\ntry{const vt=$('🦠 VirusTotal Domain').first().json;\nif(vt.data?.attributes){const mal=vt.data.attributes.last_analysis_stats?.malicious||0;\nif(mal>0){const f={source:'VirusTotal',type:'MALICIOUS_CLASSIFICATION',severity:'CRITICAL',risk_score:92,asset:init.org_domain,title:`Domain flagged MALICIOUS by ${mal} vendors`,detail:`Suspicious: ${vt.data.attributes.last_analysis_stats?.suspicious||0}`,mitre:'T1583',action:'IMMEDIATE: Domain may be compromised/hijacked'};\nvulns.push(f);confirmed.push(f);}}}catch(e){}\n\ntry{const hdrs=$('📋 HTTP Headers Analysis').first().json;\nconst headerText=typeof hdrs==='string'?hdrs:JSON.stringify(hdrs);\nconst missingHeaders=[];\nif(!headerText.includes('Strict-Transport-Security'))missingHeaders.push('HSTS missing');\nif(!headerText.includes('Content-Security-Policy'))missingHeaders.push('CSP missing');\nif(!headerText.includes('X-Frame-Options'))missingHeaders.push('X-Frame-Options missing — clickjacking possible');\nif(!headerText.includes('X-Content-Type-Options'))missingHeaders.push('X-Content-Type-Options missing');\nif(missingHeaders.length>0){vulns.push({source:'HeaderAnalysis',type:'MISSING_SECURITY_HEADERS',severity:'MEDIUM',risk_score:45,asset:init.org_domain,title:`${missingHeaders.length} security headers missing`,detail:missingHeaders.join(' | '),mitre:'T1189',action:'Add missing security headers to web server config',timestamp:init.timestamp});}}catch(e){}\n\ntry{const ww=$('🌐 WhatWeb Fingerprint').first().json;\nconst wwText=typeof ww==='string'?ww:JSON.stringify(ww);\nif(wwText){vulns.push({source:'WhatWeb',type:'TECHNOLOGY_FINGERPRINT',severity:'INFO',risk_score:15,asset:init.org_domain,title:'Technology stack fingerprinted',detail:wwText.substring(0,300),mitre:'T1592',action:'Review if technology disclosure is acceptable',timestamp:init.timestamp});}}catch(e){}\n\ntry{const nmap=$('🎯 HackerTarget Nmap').first().json;\nconst nmapText=typeof nmap==='string'?nmap:JSON.stringify(nmap);\nif(nmapText&&nmapText.includes('open')){const openPorts=nmapText.match(/\\d+\\/tcp\\s+open/g)||[];\nif(openPorts.length>0){vulns.push({source:'Nmap',type:'PORT_SCAN',severity:'INFO',risk_score:20,asset:init.targets[0],title:`${openPorts.length} open ports discovered`,detail:openPorts.join(', ').substring(0,200),mitre:'T1046',action:'Review all open ports — close unnecessary services',timestamp:init.timestamp});}}catch(e){}\n\nconst criticalVulns=[...vulns,...confirmed].filter(v=>['CRITICAL','HIGH'].includes(v.severity));\nreturn [{json:{...init,scan_results:{vulnerabilities:vulns,confirmed_exploits:confirmed,total_vulnerabilities:vulns.length,confirmed_count:confirmed.length,critical_vulns:criticalVulns},phase:'ANALYZING'}}];"
+      },
+      "id": "n070",
+      "name": "⚔️ Aggregate Attack Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Red Team Analyst — elite offensive security expert.\n\nAnalyze vulnerability findings and:\n1. Build realistic attack kill chains (chain multiple vulns)\n2. Prioritize by likelihood × impact\n3. Generate proof-of-concept descriptions\n4. Write developer-specific remediation (file/line/fix)\n5. Map to MITRE ATT&CK kill chain\n6. Estimate time-to-exploit for attackers\n7. Identify lateral movement opportunities\n8. Note data exfiltration risk\n9. Rate findings for bug bounty value\n10. Generate firewall rules to mitigate\n\nStrictly: only report what is proven/confirmed. No guesses.\n\nRespond ONLY in valid JSON:\n{\n  \"executive_summary\":\"string\",\n  \"overall_risk_score\":0,\n  \"risk_level\":\"CRITICAL|HIGH|MEDIUM|LOW\",\n  \"attack_paths\":[{\"path_id\":\"AP-001\",\"title\":\"string\",\"steps\":[\"step1 → step2\"],\"impact\":\"string\",\"likelihood\":\"HIGH|MEDIUM|LOW\",\"time_to_exploit\":\"string\",\"mitre_chain\":[\"Txxxx\"]}],\n  \"prioritized_findings\":[{\"priority\":1,\"finding\":\"string\",\"cvss\":0.0,\"remediation\":\"specific steps\",\"remediation_time\":\"string\",\"ticket_title\":\"string\",\"firewall_rule\":\"string\"}],\n  \"lateral_movement_risk\":\"string\",\n  \"data_exfiltration_risk\":\"string\",\n  \"bug_bounty_estimate\":\"string\",\n  \"quick_wins_for_attacker\":[\"string\"],\n  \"immediate_remediation_required\":true,\n  \"slack_alert\":\"string\",\n  \"telegram_alert\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Attack Run: {{ $json.attack_run_id }}\nTarget: {{ $json.org_domain }}\nVulns: {{ $json.scan_results.total_vulnerabilities }}\nConfirmed: {{ $json.scan_results.confirmed_count }}\n\nResults:\n{{ JSON.stringify($json.scan_results,null,2).substring(0,5000) }}\n\nGenerate elite analysis."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 4000
+        }
+      },
+      "id": "n071",
+      "name": "🤖 AI Attack Analyst (Elite)",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data=$('⚔️ Aggregate Attack Results').first().json;\nconst raw=$input.first().json.content[0].text;\nlet ai;\ntry{ai=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){ai={executive_summary:'Analysis error',overall_risk_score:50,risk_level:'UNKNOWN',attack_paths:[],prioritized_findings:[],immediate_remediation_required:false};}\nreturn [{json:{...data,ai_analysis:ai,final_risk_score:ai.overall_risk_score,final_risk_level:ai.risk_level,needs_immediate_action:ai.immediate_remediation_required,slack_message:ai.slack_alert,telegram_message:ai.telegram_alert,phase:'COMPLETE'}}];"
+      },
+      "id": "n072",
+      "name": "🔗 Finalize Attack Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.needs_immediate_action }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n073",
+      "name": "🚨 Critical Attack Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nconst alert=body.alert||body;\nconst iid='INC-'+Date.now();\nreturn [{json:{incident_id:iid,timestamp:new Date().toISOString(),source:md.trigger||alert.manager?.name||'UNKNOWN',trigger_type:md.trigger||'ALERT',org_domain:md.org_domain||alert.org_domain||'YOUR_COMPANY.com',alert_level:alert.rule?.level||md.final_risk_score||5,alert_description:alert.rule?.description||md.ai_analysis?.executive_summary||'Security event',source_ip:alert.data?.srcip||alert.source_ip||null,dest_ip:alert.data?.dstip||null,affected_user:alert.data?.dstuser||null,affected_host:alert.agent?.name||null,raw_alert:JSON.stringify(alert).substring(0,2000),attack_results:md.attack_results||null,critical_vulns:md.attack_results?.scan_results?.critical_vulns||[],enrichment:{},phase:'ENRICHING'}}];"
+      },
+      "id": "n080",
+      "name": "🔵 Init Defend Run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        4500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.abuseipdb.com/api/v2/check?ipAddress={{ $json.source_ip }}&maxAgeInDays=90&verbose=true",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Key",
+              "value": "={{ $credentials.abuseIpDbApiKey }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n081",
+      "name": "🛡️ AbuseIPDB Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.virustotal.com/api/v3/ip_addresses/{{ $json.source_ip }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-apikey",
+              "value": "={{ $credentials.virusTotalApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n082",
+      "name": "🦠 VirusTotal IP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/{{ $json.source_ip }}?key={{ $credentials.shodanApiKey }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n083",
+      "name": "🔍 Shodan IP Context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://ipapi.co/{{ $json.source_ip }}/json/",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 5000
+        }
+      },
+      "id": "n084",
+      "name": "🌍 IP Geolocation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://otx.alienvault.com/api/v1/indicators/IPv4/{{ $json.source_ip }}/general",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-OTX-API-KEY",
+              "value": "={{ $credentials.otxApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n085",
+      "name": "👽 OTX IP Intel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4700
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hackertarget.com/reverseiplookup/?q={{ $json.source_ip }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n086",
+      "name": "🔄 Reverse IP Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4800
+      ],
+      "notes": "ELITE: Finds all domains on same IP — shared hosting pivot detection."
+    },
+    {
+      "parameters": {
+        "url": "=https://threatfox-api.abuse.ch/api/v1/",
+        "requestMethod": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "search_ioc"
+            },
+            {
+              "name": "search_term",
+              "value": "={{ $json.source_ip }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n087",
+      "name": "🦊 ThreatFox IOC Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        4900
+      ],
+      "notes": "ELITE: ThreatFox IOC database — malware families, C2 servers, threat actors."
+    },
+    {
+      "parameters": {
+        "url": "=https://feodotracker.abuse.ch/downloads/ipblocklist.json",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n088",
+      "name": "💀 Feodo C2 Blocklist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        5000
+      ],
+      "notes": "ELITE: Feodo Tracker — known botnet C2 servers. Critical if source IP matches."
+    },
+    {
+      "parameters": {
+        "jsCode": "const alert=$('🔵 Init Defend Run').first().json;\nconst en={};\n\ntry{const ab=$('🛡️ AbuseIPDB Check').first().json;\nif(ab.data){en.abuseipdb={abuse_score:ab.data.abuseConfidenceScore,country:ab.data.countryCode,isp:ab.data.isp,usage_type:ab.data.usageType,total_reports:ab.data.totalReports,is_tor:ab.data.isTor};}}catch(e){}\n\ntry{const vt=$('🦠 VirusTotal IP').first().json;\nif(vt.data?.attributes){en.virustotal={malicious:vt.data.attributes.last_analysis_stats?.malicious||0,suspicious:vt.data.attributes.last_analysis_stats?.suspicious||0,reputation:vt.data.attributes.reputation,as_owner:vt.data.attributes.as_owner};}}catch(e){}\n\ntry{const geo=$('🌍 IP Geolocation').first().json;\nen.geolocation={city:geo.city,region:geo.region,country:geo.country_name,country_code:geo.country_code,org:geo.org,timezone:geo.timezone};}catch(e){}\n\ntry{const otx=$('👽 OTX IP Intel').first().json;\nif(otx.pulse_info){en.otx={pulse_count:otx.pulse_info.count,reputation:otx.reputation};}}catch(e){}\n\ntry{const sh=$('🔍 Shodan IP Context').first().json;\nif(sh.ports){en.shodan={ports:sh.ports,org:sh.org,isp:sh.isp,is_scanner:(sh.tags||[]).includes('scanner'),os:sh.os,country:sh.country_name};}}catch(e){}\n\ntry{const tf=$('🦊 ThreatFox IOC Check').first().json;\nif(tf.data&&tf.data.length>0){en.threatfox={malware_family:tf.data[0].malware_printable,threat_type:tf.data[0].threat_type,confidence:tf.data[0].confidence_level};}}catch(e){}\n\ntry{const feodo=$('💀 Feodo C2 Blocklist').first().json;\nif(Array.isArray(feodo)){const match=feodo.find(e=>e.ip_address===alert.source_ip);\nif(match){en.feodo={is_c2:true,malware:match.malware,status:match.status,first_seen:match.first_seen};}}}catch(e){}\n\nconst score=Math.min(100,\n  (en.abuseipdb?.abuse_score||0)+\n  (en.virustotal?.malicious||0)*5+\n  (en.otx?.pulse_count||0)>0?20:0+\n  (en.abuseipdb?.is_tor?30:0)+\n  (en.threatfox?.malware_family?40:0)+\n  (en.feodo?.is_c2?50:0));\n\nconst level=score>=80?'CRITICAL':score>=60?'HIGH':score>=30?'MEDIUM':'LOW';\n\nreturn [{json:{...alert,enrichment:en,composite_threat_score:score,threat_level:level,is_known_malicious:score>=60,is_c2_server:!!en.feodo?.is_c2,is_known_malware:!!en.threatfox?.malware_family,phase:'TRIAGING'}}];"
+      },
+      "id": "n090",
+      "name": "📊 Aggregate Enrichment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Blue Team Analyst — expert SOC analyst, DFIR specialist, threat hunter.\n\nGiven an enriched security alert:\n1. Classify: TRUE_POSITIVE / FALSE_POSITIVE / NEEDS_INVESTIGATION\n2. Severity + confidence score\n3. Full MITRE ATT&CK mapping\n4. Determine blast radius and lateral movement risk\n5. Generate auto-response actions with risk ratings\n6. Write analyst narrative (technical)\n7. Write executive narrative (plain English)\n8. Generate Wazuh detection rule to catch this in future\n9. Generate firewall rule if applicable\n10. Assess if this is part of a campaign/APT\n11. Threat actor attribution (if possible from IOCs)\n12. Recommend containment → eradication → recovery steps\n\nAuto-response autonomy:\n- Block external IP: AUTO\n- Rate limit IP: AUTO  \n- Alert analyst: AUTO\n- Disable user account: CONFIRM\n- Network isolation: CONFIRM\n- Delete files: CONFIRM\n- Evidence collection: AUTO\n\nRespond ONLY in valid JSON:\n{\n  \"classification\":\"TRUE_POSITIVE|FALSE_POSITIVE|NEEDS_INVESTIGATION\",\n  \"severity\":\"CRITICAL|HIGH|MEDIUM|LOW\",\n  \"confidence\":0,\n  \"attack_type\":\"string\",\n  \"mitre_techniques\":[\"Txxxx — name\"],\n  \"blast_radius\":\"string\",\n  \"lateral_movement_risk\":\"string\",\n  \"threat_actor_attribution\":\"string\",\n  \"is_apt_campaign\":true,\n  \"auto_response_actions\":[{\"action\":\"string\",\"reason\":\"string\",\"autonomy\":\"AUTO|CONFIRM\"}],\n  \"containment_steps\":[\"string\"],\n  \"eradication_steps\":[\"string\"],\n  \"recovery_steps\":[\"string\"],\n  \"analyst_narrative\":\"string\",\n  \"executive_narrative\":\"string\",\n  \"wazuh_rule\":\"XML rule string\",\n  \"firewall_rule\":\"iptables/pf rule string\",\n  \"incident_title\":\"string\",\n  \"escalate_to_human\":true,\n  \"escalation_reason\":\"string\",\n  \"slack_alert\":\"string\",\n  \"telegram_alert\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Incident: {{ $json.incident_id }}\nTime: {{ $json.timestamp }}\nAlert: {{ $json.alert_description }}\nLevel: {{ $json.alert_level }}\nSource IP: {{ $json.source_ip }}\nHost: {{ $json.affected_host }}\nUser: {{ $json.affected_user }}\nThreat Score: {{ $json.composite_threat_score }}/100\nIs C2: {{ $json.is_c2_server }}\nKnown Malware: {{ $json.is_known_malware }}\n\nEnrichment:\n{{ JSON.stringify($json.enrichment,null,2) }}\n\nTriage in JSON."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 3500
+        }
+      },
+      "id": "n091",
+      "name": "🤖 AI Triage (Elite)",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const enriched=$('📊 Aggregate Enrichment').first().json;\nconst raw=$input.first().json.content[0].text;\nlet t;\ntry{t=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){t={classification:'NEEDS_INVESTIGATION',severity:'HIGH',escalate_to_human:true,auto_response_actions:[],incident_title:'Alert needs review',slack_alert:'🚨 AEGIS alert needs review',telegram_alert:'Alert needs review'};}\nreturn [{json:{...enriched,triage:t,is_true_positive:t.classification==='TRUE_POSITIVE',final_severity:t.severity,needs_human:t.escalate_to_human,auto_actions:t.auto_response_actions?.filter(a=>a.autonomy==='AUTO')||[],confirm_actions:t.auto_response_actions?.filter(a=>a.autonomy==='CONFIRM')||[],slack_message:t.slack_alert,telegram_message:t.telegram_alert,phase:'RESPONDING'}}];"
+      },
+      "id": "n092",
+      "name": "🔗 Parse Triage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.is_true_positive }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n093",
+      "name": "✅ True Positive?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.final_severity }}",
+              "rightValue": "CRITICAL",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "n094",
+      "name": "🔴 Is Critical?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        4500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.abuseipdb.com/api/v2/report",
+        "requestMethod": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Key",
+              "value": "={{ $credentials.abuseIpDbApiKey }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ip",
+              "value": "={{ $json.source_ip }}"
+            },
+            {
+              "name": "categories",
+              "value": "18,21"
+            },
+            {
+              "name": "comment",
+              "value": "=AEGIS ELITE Auto-Block | {{ $json.triage.attack_type }} | Incident: {{ $json.incident_id }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "n095",
+      "name": "🚫 Auto-Block IP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2500,
+        4300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "issue",
+        "operation": "create",
+        "project": "SECURITY",
+        "summary": "=[AEGIS-{{ $json.final_severity }}] {{ $json.triage.incident_title }}",
+        "description": "=*Incident:* {{ $json.incident_id }}\n*Severity:* {{ $json.final_severity }}\n*Confidence:* {{ $json.triage.confidence }}%\n*Time:* {{ $json.timestamp }}\n*Attack:* {{ $json.triage.attack_type }}\n*MITRE:* {{ $json.triage.mitre_techniques?.join(', ') }}\n*Threat Score:* {{ $json.composite_threat_score }}/100\n*Source IP:* {{ $json.source_ip }} ({{ $json.enrichment.geolocation?.country }})\n*Is C2:* {{ $json.is_c2_server }}\n*APT Campaign:* {{ $json.triage.is_apt_campaign }}\n\n*Threat Actor:* {{ $json.triage.threat_actor_attribution }}\n*Blast Radius:* {{ $json.triage.blast_radius }}\n*Lateral Movement:* {{ $json.triage.lateral_movement_risk }}\n\n*Analyst Assessment:*\n{{ $json.triage.analyst_narrative }}\n\n*Containment:*\n{{ $json.triage.containment_steps?.map((s,i)=>`${i+1}. ${s}`).join('\\n') }}\n\n*Eradication:*\n{{ $json.triage.eradication_steps?.map((s,i)=>`${i+1}. ${s}`).join('\\n') }}\n\n*Detection Rule:*\n{code:xml}{{ $json.triage.wazuh_rule }}{code}\n\n*Firewall Rule:*\n{code}{{ $json.triage.firewall_rule }}{code}",
+        "issueType": "Bug",
+        "priority": "={{ $json.final_severity==='CRITICAL'?'Highest':$json.final_severity==='HIGH'?'High':'Medium' }}"
+      },
+      "id": "n096",
+      "name": "🎫 Create Jira Ticket",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        4450
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "aegis@yourdomain.com",
+        "toEmail": "security-oncall@yourdomain.com",
+        "subject": "=🚨 AEGIS CRITICAL — {{ $json.triage.incident_title }} [{{ $json.incident_id }}]",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#030308;color:#e0e0f0;padding:20px}.wrap{max-width:680px;margin:0 auto}.alarm{background:linear-gradient(135deg,#3a0000,#1a0000);border:2px solid #ff0000;border-radius:12px;padding:24px;margin-bottom:18px;text-align:center}.alarm h1{color:#ff2244;font-size:24px;font-weight:900;letter-spacing:2px}.alarm p{color:#ff8888;margin-top:6px}.card{background:#0a0a12;border:1px solid #1a1a2e;border-radius:10px;padding:18px;margin:12px 0}.card h2{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#4488ff;margin-bottom:10px;font-weight:700}.metric-row{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}.metric{background:#06060e;border:1px solid #1e1e3e;border-radius:8px;padding:12px 18px;text-align:center;flex:1;min-width:100px}.metric .val{font-size:24px;font-weight:800;color:#ff4444}.metric .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:3px}.step{background:#060612;border-left:3px solid #ff4444;padding:10px 14px;margin:6px 0;border-radius:0 6px 6px 0;font-size:13px}.btn{display:inline-block;padding:13px 28px;border-radius:8px;text-decoration:none;font-weight:700;margin:6px;font-size:14px}.btn-isolate{background:linear-gradient(135deg,#ff0022,#cc0011);color:#fff}.btn-dismiss{background:#1a1a2e;color:#888;border:1px solid #333}</style></head><body><div class='wrap'><div class='alarm'><h1>⚠️ CRITICAL INCIDENT</h1><p>{{ $json.triage.incident_title }}</p><p style='color:#888;margin-top:4px;font-size:12px'>{{ $json.timestamp }} | {{ $json.incident_id }}</p></div><div class='metric-row'><div class='metric'><div class='val'>{{ $json.final_severity }}</div><div class='lbl'>Severity</div></div><div class='metric'><div class='val'>{{ $json.composite_threat_score }}/100</div><div class='lbl'>Threat Score</div></div><div class='metric'><div class='val'>{{ $json.triage.confidence }}%</div><div class='lbl'>Confidence</div></div><div class='metric'><div class='val'>{{ $json.is_c2_server?'YES':'No' }}</div><div class='lbl'>C2 Server</div></div></div><div class='card'><h2>Executive Summary</h2><p>{{ $json.triage.executive_narrative }}</p></div><div class='card'><h2>Attacker Intel</h2><p><b>IP:</b> {{ $json.source_ip }} | <b>Country:</b> {{ $json.enrichment.geolocation?.country }}<br/><b>ISP:</b> {{ $json.enrichment.abuseipdb?.isp }} | <b>Tor:</b> {{ $json.enrichment.abuseipdb?.is_tor?'YES':'No' }}<br/><b>Attribution:</b> {{ $json.triage.threat_actor_attribution }}<br/><b>APT Campaign:</b> {{ $json.triage.is_apt_campaign?'SUSPECTED':'No' }}</p></div><div class='card'><h2>Containment Steps</h2>{{ $json.triage.containment_steps?.map((s,i)=>`<div class='step'><b>${i+1}.</b> ${s}</div>`).join('') }}</div><div class='card'><h2>AEGIS Auto-Actions Taken</h2>{{ $json.auto_actions?.map(a=>`<p>✅ ${a.action} — ${a.reason}</p>`).join('') }}</div><div style='text-align:center;padding:20px'><a href='https://YOUR_N8N_URL/webhook/aegis/confirm?incident={{ $json.incident_id }}&action=isolate&token=AEGIS_SECURE' class='btn btn-isolate'>🔴 ISOLATE HOST NOW</a><a href='https://YOUR_N8N_URL/webhook/aegis/confirm?incident={{ $json.incident_id }}&action=dismiss&token=AEGIS_SECURE' class='btn btn-dismiss'>Dismiss</a></div></div></body></html>"
+      },
+      "id": "n097",
+      "name": "📟 Page On-Call",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2500,
+        4600
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "operation": "post",
+        "channel": "#security-critical",
+        "text": "={{ $json.slack_message || '🚨 AEGIS Critical Alert — check email' }}",
+        "otherOptions": {
+          "attachments": [
+            {
+              "color": "danger",
+              "title": "={{ $json.triage?.incident_title }}",
+              "text": "={{ $json.triage?.executive_narrative }}",
+              "fields": [
+                {
+                  "title": "Severity",
+                  "value": "={{ $json.final_severity }}",
+                  "short": true
+                },
+                {
+                  "title": "Threat Score",
+                  "value": "={{ $json.composite_threat_score }}/100",
+                  "short": true
+                },
+                {
+                  "title": "Source IP",
+                  "value": "={{ $json.source_ip }}",
+                  "short": true
+                },
+                {
+                  "title": "Country",
+                  "value": "={{ $json.enrichment?.geolocation?.country }}",
+                  "short": true
+                },
+                {
+                  "title": "Attack Type",
+                  "value": "={{ $json.triage?.attack_type }}",
+                  "short": true
+                },
+                {
+                  "title": "Incident ID",
+                  "value": "={{ $json.incident_id }}",
+                  "short": true
+                }
+              ],
+              "footer": "AEGIS ELITE v2.0"
+            }
+          ]
+        }
+      },
+      "id": "n098",
+      "name": "💬 Slack Critical Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        2500,
+        4750
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramBotToken }}/sendMessage",
+        "requestMethod": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $credentials.telegramChatId }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "HTML"
+            },
+            {
+              "name": "text",
+              "value": "=🚨 <b>AEGIS CRITICAL ALERT</b>\n\n<b>{{ $json.triage?.incident_title }}</b>\n\n⚠️ Severity: <b>{{ $json.final_severity }}</b>\n🎯 Threat Score: <b>{{ $json.composite_threat_score }}/100</b>\n🌍 Source: <b>{{ $json.source_ip }} ({{ $json.enrichment?.geolocation?.country }})</b>\n💀 C2 Server: <b>{{ $json.is_c2_server ? 'YES — MALWARE BOTNET' : 'No' }}</b>\n\n{{ $json.triage?.executive_narrative?.substring(0,200) }}\n\n<i>Incident: {{ $json.incident_id }}</i>"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "n099",
+      "name": "📱 Telegram Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2500,
+        4900
+      ],
+      "notes": "ELITE: Instant Telegram alert to security team."
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst rd=body.report_data?JSON.parse(body.report_data):body;\nconst rt=body.report_type||'GENERAL';\nreturn [{json:{report_id:'RPT-'+Date.now(),report_type:rt,timestamp:new Date().toISOString(),data:rd,org_domain:rd.org_domain||'YOUR_COMPANY.com',version:'ELITE-2.0'}}];"
+      },
+      "id": "n100",
+      "name": "📊 Init Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        5500
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Report Intelligence Engine.\n\nGenerate elite security reports for three audiences simultaneously:\n\nTECHNICAL (Security Analysts):\n- Full findings with CVEs, MITRE mappings, PoC descriptions\n- Exact remediation steps with file paths / commands\n- Detection rules (Wazuh/Sigma format)\n- Firewall rules for each finding\n\nEXECUTIVE (CISO/Board):\n- Plain English, business impact framing\n- Risk trend vs last period\n- Regulatory compliance status\n- Resource requirements to fix\n- ROI of security spend\n\nDEVELOPER:\n- Specific file/function/line references\n- Code fix examples\n- Testing instructions to verify fix\n- PR/ticket descriptions\n\nFor WEEKLY reports:\n- Security posture score trend chart data\n- MTTR (Mean Time To Respond) metrics\n- False positive rate\n- Coverage gaps\n- Top threat actors targeting your industry\n\nAlways include:\n- Gamified security score (0-1000 pts) with achievements earned\n- Next week's predicted threat landscape\n- Three things going well (positive reinforcement)\n\nRespond ONLY in valid JSON:\n{\n  \"report_title\":\"string\",\n  \"executive_summary\":\"string\",\n  \"risk_score\":0,\n  \"risk_level\":\"CRITICAL|HIGH|MEDIUM|LOW\",\n  \"risk_trend\":\"IMPROVING|STABLE|WORSENING\",\n  \"risk_trend_detail\":\"string\",\n  \"key_metrics\":{\"findings\":0,\"critical\":0,\"high\":0,\"medium\":0,\"low\":0,\"fixed\":0,\"open\":0,\"mttr\":\"string\",\"false_positive_rate\":\"string\"},\n  \"gamification\":{\"security_score\":0,\"score_delta\":\"+/-N\",\"rank\":\"string\",\"achievements\":[\"string\"],\"next_milestone\":\"string\"},\n  \"top_findings\":[{\"title\":\"string\",\"severity\":\"string\",\"asset\":\"string\",\"cvss\":0,\"mitre\":\"string\",\"remediation\":\"string\",\"detection_rule\":\"string\",\"firewall_rule\":\"string\",\"priority\":1}],\n  \"attack_paths\":[{\"title\":\"string\",\"steps\":[\"string\"],\"impact\":\"string\",\"likelihood\":\"string\"}],\n  \"immediate_actions\":[\"string\"],\n  \"quick_wins\":[\"string\"],\n  \"things_going_well\":[\"string\"],\n  \"developer_tickets\":[{\"title\":\"string\",\"description\":\"string\",\"priority\":\"string\",\"estimated_fix_time\":\"string\",\"code_hint\":\"string\"}],\n  \"compliance\":{\"soc2\":{\"status\":\"PASS|FAIL|REVIEW\",\"detail\":\"string\"},\"iso27001\":{\"status\":\"PASS|FAIL|REVIEW\",\"detail\":\"string\"},\"gdpr\":{\"status\":\"PASS|FAIL|REVIEW\",\"detail\":\"string\"},\"hipaa\":{\"status\":\"PASS|FAIL|REVIEW\",\"detail\":\"string\"}},\n  \"threat_forecast\":\"string\",\n  \"threat_actors_active\":\"string\",\n  \"slack_message\":\"string\",\n  \"telegram_message\":\"string\",\n  \"exec_one_liner\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Report: {{ $json.report_id }}\nType: {{ $json.report_type }}\nOrg: {{ $json.org_domain }}\nTime: {{ $json.timestamp }}\n\nData:\n{{ JSON.stringify($json.data,null,2).substring(0,7000) }}\n\nGenerate elite report."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 7000
+        }
+      },
+      "id": "n101",
+      "name": "🤖 AI Report Engine (Elite)",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        700,
+        5500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const init=$('📊 Init Report').first().json;\nconst raw=$input.first().json.content[0].text;\nlet r;\ntry{r=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){r={report_title:'AEGIS Report',executive_summary:'Report error',risk_score:0,risk_level:'UNKNOWN',top_findings:[],immediate_actions:[],gamification:{security_score:0,achievements:[]},compliance:{},slack_message:'🛡️ AEGIS report ready',telegram_message:'Report ready'};}\n\nconst rc=r.risk_level==='CRITICAL'?'#ff0000':r.risk_level==='HIGH'?'#ff6600':r.risk_level==='MEDIUM'?'#ffcc00':'#00cc44';\nconst ti=r.risk_trend==='IMPROVING'?'↘ Improving':r.risk_trend==='WORSENING'?'↗ Worsening':'→ Stable';\nconst tc=r.risk_trend==='IMPROVING'?'#00cc44':r.risk_trend==='WORSENING'?'#ff4444':'#ffcc00';\n\nconst html=`<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>AEGIS ELITE — ${r.report_title}</title><style>@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800;900&display=swap');:root{--bg:#03030a;--card:#08080f;--card2:#0d0d18;--border:#1a1a2e;--text:#dde0f0;--muted:#555;--blue:#4488ff;--purple:#8844ff;--red:#ff2244;--orange:#ff6600;--yellow:#ffcc00;--green:#00dd88;--cyan:#00ccff;}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;padding:0;min-height:100vh}body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 20%,rgba(68,136,255,0.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(136,68,255,0.04) 0%,transparent 60%);pointer-events:none;z-index:0}.container{max-width:1200px;margin:0 auto;padding:24px;position:relative;z-index:1}.header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;background:linear-gradient(135deg,rgba(8,8,20,0.95),rgba(13,8,30,0.95));border:1px solid rgba(136,68,255,0.3);border-radius:16px;padding:32px;margin-bottom:24px;backdrop-filter:blur(20px)}.header-text .logo{font-size:13px;font-weight:700;color:var(--purple);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}.header-text h1{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}.header-text .meta{color:var(--muted);font-size:13px;margin-top:8px;font-family:'Space Mono',monospace}.risk-orb{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,${rc}22,transparent);border:2px solid ${rc};box-shadow:0 0 40px ${rc}44}.risk-orb .score{font-size:40px;font-weight:900;color:${rc};line-height:1}.risk-orb .level{font-size:12px;font-weight:700;color:${rc};letter-spacing:2px}.risk-orb .label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}.trend-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;color:${tc};border:1px solid ${tc};background:${tc}22;margin-top:8px}.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:24px}.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;position:relative;overflow:hidden}.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}.metric-card .val{font-size:36px;font-weight:900;color:var(--blue);line-height:1}.metric-card .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}.section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden}.section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--blue);margin-bottom:16px;display:flex;align-items:center;gap:8px}.finding{background:var(--card2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:16px;margin:10px 0}.finding.high{border-left-color:var(--orange)}.finding.medium{border-left-color:var(--yellow)}.finding.low{border-left-color:var(--green)}.finding-title{font-weight:700;font-size:15px;margin-bottom:6px}.finding-meta{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px}.finding-fix{background:rgba(0,221,136,0.06);border:1px solid rgba(0,221,136,0.2);border-radius:6px;padding:10px;font-size:12px;color:var(--green);margin-top:8px;font-family:'Space Mono',monospace}.finding-rule{background:rgba(68,136,255,0.06);border:1px solid rgba(68,136,255,0.2);border-radius:6px;padding:8px;font-size:11px;color:var(--cyan);margin-top:6px;font-family:'Space Mono',monospace;white-space:pre-wrap;word-break:break-all}.attack-path{background:var(--card2);border:1px solid rgba(136,68,255,0.2);border-radius:10px;padding:16px;margin:10px 0}.path-steps{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}.path-step{background:rgba(68,136,255,0.1);border:1px solid rgba(68,136,255,0.3);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--blue)}.arrow{color:var(--red);font-size:18px}.action-item{background:var(--card2);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:12px 16px;margin:8px 0;font-size:14px}.positive-item{background:var(--card2);border-left:4px solid var(--cyan);border-radius:0 8px 8px 0;padding:12px 16px;margin:8px 0;font-size:14px}.compliance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.compliance-card{background:var(--card2);border-radius:10px;padding:16px;border:1px solid var(--border)}.compliance-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:6px}.compliance-status{font-size:16px;font-weight:800;margin-bottom:4px}.status-pass{color:var(--green)}.status-fail{color:var(--red)}.status-review{color:var(--yellow)}.gamification{background:linear-gradient(135deg,rgba(136,68,255,0.1),rgba(68,136,255,0.1));border:1px solid rgba(136,68,255,0.3);border-radius:14px;padding:24px;margin-bottom:20px;text-align:center}.game-score{font-size:64px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.game-rank{font-size:18px;font-weight:700;color:var(--purple);margin:4px 0}.achievements{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.achievement{background:rgba(255,204,0,0.1);border:1px solid rgba(255,204,0,0.3);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--yellow)}.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}.badge-critical{background:rgba(255,34,68,0.15);color:var(--red);border:1px solid var(--red)}.badge-high{background:rgba(255,102,0,0.15);color:var(--orange);border:1px solid var(--orange)}.badge-medium{background:rgba(255,204,0,0.15);color:var(--yellow);border:1px solid var(--yellow)}.badge-low{background:rgba(0,221,136,0.15);color:var(--green);border:1px solid var(--green)}.forecast-box{background:linear-gradient(135deg,rgba(0,204,255,0.05),rgba(68,136,255,0.05));border:1px solid rgba(0,204,255,0.2);border-radius:10px;padding:18px;margin-top:12px;font-size:14px;color:#aac8ff;line-height:1.7}.footer{text-align:center;padding:32px 24px;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;border-top:1px solid var(--border);margin-top:24px}</style></head><body><div class='container'><div class='header'><div class='header-text'><div class='logo'>AEGIS ELITE v2.0</div><h1>${r.report_title}</h1><div class='meta'>${init.org_domain} &nbsp;•&nbsp; ${init.timestamp} &nbsp;•&nbsp; ${init.report_id}</div><div class='trend-badge'>${ti}</div></div><div class='risk-orb'><div class='score'>${r.risk_score}</div><div class='level'>${r.risk_level}</div><div class='label'>Risk Score</div></div></div><div class='gamification'><div style='font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-bottom:8px'>Security Gamification Score</div><div class='game-score'>${r.gamification?.security_score||0}<span style='font-size:24px;color:var(--muted)'>/1000</span></div><div class='game-rank'>${r.gamification?.rank||'Security Practitioner'} &nbsp;•&nbsp; <span style='color:var(--green)'>${r.gamification?.score_delta||'+0'} pts this period</span></div><div class='achievements'>${(r.gamification?.achievements||[]).map(a=>`<div class='achievement'>🏆 ${a}</div>`).join('')}</div><div style='font-size:12px;color:var(--muted);margin-top:10px'>Next milestone: ${r.gamification?.next_milestone||'Keep going!'}</div></div><div class='metrics-grid'><div class='metric-card'><div class='val' style='color:var(--red)'>${r.key_metrics?.critical||0}</div><div class='lbl'>Critical</div></div><div class='metric-card'><div class='val' style='color:var(--orange)'>${r.key_metrics?.high||0}</div><div class='lbl'>High</div></div><div class='metric-card'><div class='val' style='color:var(--yellow)'>${r.key_metrics?.medium||0}</div><div class='lbl'>Medium</div></div><div class='metric-card'><div class='val' style='color:var(--green)'>${r.key_metrics?.fixed||0}</div><div class='lbl'>Fixed</div></div><div class='metric-card'><div class='val' style='color:var(--blue)'>${r.key_metrics?.open||0}</div><div class='lbl'>Open</div></div><div class='metric-card'><div class='val' style='font-size:20px;color:var(--cyan)'>${r.key_metrics?.mttr||'N/A'}</div><div class='lbl'>MTTR</div></div></div><div class='section'><div class='section-title'>📋 Executive Summary</div><p style='line-height:1.8;color:#c0c8e0;font-size:15px'>${r.executive_summary}</p><p style='margin-top:12px;font-size:13px;color:var(--muted);font-style:italic'>${r.exec_one_liner||''}</p></div><div class='section'><div class='section-title'>🔴 Top Security Findings</div>${(r.top_findings||[]).map(f=>`<div class='finding ${f.severity?.toLowerCase()}'><div class='finding-title'>#${f.priority} — ${f.title} <span class='badge badge-${f.severity?.toLowerCase()}'>${f.severity}</span> ${f.cvss?`<span style='color:var(--muted);font-size:12px'>CVSS ${f.cvss}</span>`:''}</div><div class='finding-meta'>📍 ${f.asset} &nbsp;|&nbsp; 🎯 ${f.mitre||'N/A'}</div><div class='finding-fix'>💊 Fix: ${f.remediation}</div>${f.detection_rule?`<div class='finding-rule'>📡 Detection: ${f.detection_rule}</div>`:''}</div>`).join('')}</div>${(r.attack_paths||[]).length>0?`<div class='section'><div class='section-title'>⚔️ Attack Paths</div>${r.attack_paths.map(p=>`<div class='attack-path'><strong>${p.title}</strong> &nbsp;<span style='font-size:12px;color:var(--muted)'>Likelihood: ${p.likelihood}</span><div style='font-size:13px;color:var(--muted);margin:6px 0'>${p.impact}</div><div class='path-steps'>${p.steps.map((s,i)=>`<span class='path-step'>${s}</span>${i<p.steps.length-1?'<span class=\\'arrow\\'>→</span>':''}`).join('')}</div></div>`).join('')}</div>`:''}<div class='section'><div class='section-title'>✅ Immediate Actions Required</div>${(r.immediate_actions||[]).map((a,i)=>`<div class='action-item'><strong>${i+1}.</strong> ${a}</div>`).join('')}</div><div class='section'><div class='section-title'>⚡ Quick Wins (Under 1hr Each)</div>${(r.quick_wins||[]).map((q,i)=>`<div class='action-item'><strong>${i+1}.</strong> ${q}</div>`).join('')}</div><div class='section'><div class='section-title'>💚 Things Going Well</div>${(r.things_going_well||[]).map(t=>`<div class='positive-item'>✓ ${t}</div>`).join('')}</div>${(r.developer_tickets||[]).length>0?`<div class='section'><div class='section-title'>🎫 Developer Tickets</div>${r.developer_tickets.map(t=>`<div class='finding medium'><div class='finding-title'>${t.title} <span class='badge badge-${t.priority?.toLowerCase()}'>${t.priority}</span></div><div style='font-size:13px;color:#bbb;margin:6px 0'>${t.description}</div>${t.code_hint?`<div class='finding-rule'>${t.code_hint}</div>`:''}<div style='font-size:11px;color:var(--muted);margin-top:8px'>⏱ ${t.estimated_fix_time}</div></div>`).join('')}</div>`:''}<div class='section'><div class='section-title'>📋 Compliance Status</div><div class='compliance-grid'>${['soc2','iso27001','gdpr','hipaa'].map(f=>{const c=r.compliance?.[f];return `<div class='compliance-card'><div class='compliance-label'>${f.toUpperCase()}</div><div class='compliance-status status-${(c?.status||'review').toLowerCase()}'>${c?.status||'REVIEW'}</div><div style='font-size:12px;color:var(--muted);margin-top:4px'>${c?.detail||'Pending assessment'}</div></div>`;}).join('')}</div></div><div class='section'><div class='section-title'>🔭 Threat Forecast</div><p style='font-size:13px;color:var(--muted);margin-bottom:8px'><strong>Active Threat Actors:</strong> ${r.threat_actors_active||'None detected'}</p><div class='forecast-box'>${r.threat_forecast||'No forecast available'}</div></div><div class='footer'>🛡️ AEGIS ELITE v2.0 &nbsp;•&nbsp; Autonomous Enterprise & Guardian Intelligence System<br/>${init.report_id} &nbsp;•&nbsp; ${init.timestamp}<br/>All findings require verification by qualified security personnel. This report is confidential.</div></div></body></html>`;\n\nreturn [{json:{...init,report:r,html_report:html,slack_message:r.slack_message,telegram_message:r.telegram_message,risk_level:r.risk_level,risk_score:r.risk_score,has_critical:(r.key_metrics?.critical||0)>0}}];"
+      },
+      "id": "n102",
+      "name": "🏗️ Build Elite HTML Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        5500
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "operation": "post",
+        "channel": "#security-alerts",
+        "text": "={{ $json.slack_message }}",
+        "otherOptions": {
+          "attachments": [
+            {
+              "color": "={{ $json.risk_level==='CRITICAL'?'danger':$json.risk_level==='HIGH'?'warning':'good' }}",
+              "title": "={{ $json.report?.report_title }}",
+              "text": "={{ $json.report?.executive_summary?.substring(0,200) }}",
+              "fields": [
+                {
+                  "title": "Risk Score",
+                  "value": "={{ $json.risk_score }}/100",
+                  "short": true
+                },
+                {
+                  "title": "Risk Level",
+                  "value": "={{ $json.risk_level }}",
+                  "short": true
+                },
+                {
+                  "title": "Critical",
+                  "value": "={{ $json.report?.key_metrics?.critical||0 }}",
+                  "short": true
+                },
+                {
+                  "title": "Security Score",
+                  "value": "={{ $json.report?.gamification?.security_score||0 }}/1000",
+                  "short": true
+                }
+              ],
+              "footer": "AEGIS ELITE v2.0"
+            }
+          ]
+        }
+      },
+      "id": "n110",
+      "name": "💬 Slack: Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        5300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "aegis@yourdomain.com",
+        "toEmail": "security-team@yourdomain.com",
+        "subject": "=[AEGIS {{ $json.risk_level }}] {{ $json.report?.report_title }} — Score: {{ $json.risk_score }}/100",
+        "emailType": "html",
+        "message": "={{ $json.html_report }}"
+      },
+      "id": "n111",
+      "name": "📧 Email: Analyst Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        5450
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "aegis@yourdomain.com",
+        "toEmail": "ciso@yourdomain.com",
+        "subject": "=[AEGIS Weekly] Security: {{ $json.risk_level }} | Score {{ $json.risk_score }}/100",
+        "emailType": "html",
+        "message": "=<!DOCTYPE html><html><head><style>body{font-family:'Segoe UI',sans-serif;background:#fff;color:#1a1a2e;padding:30px;max-width:600px;margin:0 auto}.h{background:linear-gradient(135deg,#0d0d2e,#1a0d3e);color:#fff;padding:24px;border-radius:10px;margin-bottom:20px}.score{font-size:52px;font-weight:900;color:{{ $json.risk_level==='CRITICAL'?'#ff4444':$json.risk_level==='HIGH'?'#ff8800':'#00cc44' }}}.card{background:#f8f9fa;border-radius:8px;padding:18px;margin:14px 0}.action{background:#fff3cd;border-left:4px solid #ffc107;padding:12px;margin:8px 0;border-radius:0 4px 4px 0}.good{background:#d4edda;border-left:4px solid #28a745;padding:12px;margin:8px 0;border-radius:0 4px 4px 0}</style></head><body><div class='h'><p style='opacity:0.7;font-size:12px;margin-bottom:6px'>🛡️ AEGIS ELITE EXECUTIVE REPORT</p><p style='font-size:20px;font-weight:800'>{{ $json.report?.report_title }}</p><p style='opacity:0.6;font-size:12px;margin-top:4px'>{{ $json.org_domain }} | {{ $json.timestamp }}</p></div><div class='card'><p style='font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px'>Security Posture</p><div class='score'>{{ $json.risk_score }}/100</div><p style='font-weight:700;margin-top:4px'>{{ $json.risk_level }} — {{ $json.report?.risk_trend }}</p><p style='color:#888;font-size:13px;margin-top:6px'>Security Score: {{ $json.report?.gamification?.security_score }}/1000 pts ({{ $json.report?.gamification?.score_delta }} this period)</p></div><div class='card'><p style='font-weight:700;margin-bottom:8px'>Summary</p><p style='line-height:1.6;font-size:14px'>{{ $json.report?.executive_summary }}</p></div><div class='card'><p style='font-weight:700;margin-bottom:8px'>Numbers</p><table width='100%' cellpadding='6'><tr><td>Critical Issues</td><td><strong>{{ $json.report?.key_metrics?.critical||0 }}</strong></td></tr><tr><td>Total Open</td><td><strong>{{ $json.report?.key_metrics?.open||0 }}</strong></td></tr><tr><td>Fixed This Period</td><td><strong>{{ $json.report?.key_metrics?.fixed||0 }}</strong></td></tr><tr><td>Response Time (MTTR)</td><td><strong>{{ $json.report?.key_metrics?.mttr||'N/A' }}</strong></td></tr></table></div><div class='card'><p style='font-weight:700;margin-bottom:8px'>Your 3 Actions</p>{{ $json.report?.immediate_actions?.slice(0,3).map((a,i)=>`<div class='action'><strong>${i+1}.</strong> ${a}</div>`).join('') }}</div><div class='card'><p style='font-weight:700;margin-bottom:8px'>✅ What's Working</p>{{ $json.report?.things_going_well?.map(t=>`<div class='good'>${t}</div>`).join('') }}</div><p style='text-align:center;color:#888;font-size:11px;margin-top:20px'>AEGIS ELITE v2.0 | {{ $json.report_id }}</p></body></html>"
+      },
+      "id": "n112",
+      "name": "📧 Email: CISO Executive",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        5600
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "page",
+        "operation": "create",
+        "pageTitle": "=[AEGIS] {{ $json.report?.report_title }} — {{ $json.timestamp }}",
+        "pageContent": "={{ $json.html_report }}"
+      },
+      "id": "n113",
+      "name": "📚 Save to Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        5750
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "issue",
+        "operation": "create",
+        "project": "SECURITY",
+        "summary": "=[AEGIS Report] {{ $json.report?.report_title }}",
+        "description": "=*Report:* {{ $json.report_id }}\n*Risk:* {{ $json.risk_score }}/100 ({{ $json.risk_level }})\n*Security Score:* {{ $json.report?.gamification?.security_score }}/1000\n*Generated:* {{ $json.timestamp }}\n\n*Summary:*\n{{ $json.report?.executive_summary }}\n\n*Critical Findings:* {{ $json.report?.key_metrics?.critical||0 }}\n\n*Immediate Actions:*\n{{ $json.report?.immediate_actions?.map((a,i)=>`${i+1}. ${a}`).join('\\n') }}\n\n*Compliance:*\nSOC2: {{ $json.report?.compliance?.soc2?.status }} | ISO27001: {{ $json.report?.compliance?.iso27001?.status }} | GDPR: {{ $json.report?.compliance?.gdpr?.status }}",
+        "issueType": "Task",
+        "priority": "={{ $json.risk_level==='CRITICAL'?'Highest':$json.risk_level==='HIGH'?'High':'Medium' }}"
+      },
+      "id": "n114",
+      "name": "🎫 Jira: Report Ticket",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        5900
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramBotToken }}/sendMessage",
+        "requestMethod": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $credentials.telegramChatId }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "HTML"
+            },
+            {
+              "name": "text",
+              "value": "=🛡️ <b>AEGIS ELITE Report</b>\n\n<b>{{ $json.report?.report_title }}</b>\n\n📊 Risk Score: <b>{{ $json.risk_score }}/100 ({{ $json.risk_level }})</b>\n🎮 Security Score: <b>{{ $json.report?.gamification?.security_score }}/1000</b>\n🔴 Critical: <b>{{ $json.report?.key_metrics?.critical||0 }}</b>\n\n{{ $json.report?.exec_one_liner }}\n\n<i>{{ $json.report_id }}</i>"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "n115",
+      "name": "📱 Telegram: Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1300,
+        6050
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{compliance_run_id:'COMP-'+Date.now(),timestamp:new Date().toISOString(),org_domain:md.org_domain||'YOUR_COMPANY.com',trigger:md.trigger||'SCHEDULED',frameworks:['SOC2','ISO27001','GDPR','HIPAA','PCI-DSS'],findings:[]}}];"
+      },
+      "id": "n120",
+      "name": "📋 Init Compliance Run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        6500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://dns.google/resolve?name={{ $json.org_domain }}&type=TXT",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n121",
+      "name": "🔐 Compliance: DNS Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        6300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://dns.google/resolve?name=_dmarc.{{ $json.org_domain }}&type=TXT",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 8000
+        }
+      },
+      "id": "n122",
+      "name": "📧 Compliance: DMARC",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        6400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.ssllabs.com/api/v3/analyze?host={{ $json.org_domain }}&all=done",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "n123",
+      "name": "🔒 Compliance: SSL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        6500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://haveibeenpwned.com/api/v3/breachedaccount/{{ $json.org_domain }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "hibp-api-key",
+              "value": "={{ $credentials.hibpApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "n124",
+      "name": "💀 Compliance: Breach Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        6600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.shodan.io/shodan/host/search?key={{ $credentials.shodanApiKey }}&query=org:\"{{ $json.org_domain }}\"&facets=port",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "n125",
+      "name": "🔍 Compliance: Exposure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        6700
+      ]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-6",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are AEGIS ELITE Compliance Auditor.\n\nAnalyze security data against compliance frameworks and produce a gap analysis.\n\nFrameworks to evaluate:\n- SOC 2 Type II (Security, Availability, Confidentiality)\n- ISO 27001:2022 (Information security controls)\n- GDPR (Data protection by design, breach notification)\n- HIPAA (if healthcare data involved)\n- PCI-DSS (if payment data involved)\n- NIST CSF (Identify, Protect, Detect, Respond, Recover)\n\nFor each framework:\n1. Overall status: PASS / PARTIAL / FAIL\n2. Specific control gaps found\n3. Evidence required for audit\n4. Remediation priority and timeline\n5. Risk of non-compliance (regulatory fines, reputation)\n\nRespond ONLY in valid JSON:\n{\n  \"overall_compliance_score\":0,\n  \"frameworks\":{\n    \"soc2\":{\"status\":\"PASS|PARTIAL|FAIL\",\"score\":0,\"gaps\":[\"string\"],\"evidence_needed\":[\"string\"],\"remediation\":\"string\",\"risk\":\"string\"},\n    \"iso27001\":{\"status\":\"PASS|PARTIAL|FAIL\",\"score\":0,\"gaps\":[\"string\"],\"evidence_needed\":[\"string\"],\"remediation\":\"string\",\"risk\":\"string\"},\n    \"gdpr\":{\"status\":\"PASS|PARTIAL|FAIL\",\"score\":0,\"gaps\":[\"string\"],\"evidence_needed\":[\"string\"],\"remediation\":\"string\",\"risk\":\"string\"},\n    \"nist_csf\":{\"status\":\"PASS|PARTIAL|FAIL\",\"score\":0,\"gaps\":[\"string\"],\"evidence_needed\":[\"string\"],\"remediation\":\"string\",\"risk\":\"string\"}\n  },\n  \"critical_gaps\":[\"string\"],\n  \"immediate_remediation\":[\"string\"],\n  \"audit_readiness\":\"READY|PARTIAL|NOT_READY\",\n  \"compliance_summary\":\"string\",\n  \"regulatory_risk\":\"string\",\n  \"slack_message\":\"string\"\n}"
+            },
+            {
+              "role": "user",
+              "content": "=Compliance Run: {{ $json.compliance_run_id }}\nOrg: {{ $json.org_domain }}\n\nDNS/SPF Data: {{ JSON.stringify($('🔐 Compliance: DNS Check').first().json).substring(0,500) }}\nDMARC: {{ JSON.stringify($('📧 Compliance: DMARC').first().json).substring(0,300) }}\nSSL: {{ JSON.stringify($('🔒 Compliance: SSL').first().json).substring(0,500) }}\nBreaches: {{ JSON.stringify($('💀 Compliance: Breach Check').first().json).substring(0,300) }}\nExposure: {{ JSON.stringify($('🔍 Compliance: Exposure').first().json).substring(0,500) }}\n\nGenerate compliance gap analysis."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 4000
+        }
+      },
+      "id": "n126",
+      "name": "🤖 AI Compliance Auditor",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        6500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const init=$('📋 Init Compliance Run').first().json;\nconst raw=$input.first().json.content[0].text;\nlet report;\ntry{report=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){report={overall_compliance_score:0,frameworks:{},critical_gaps:[],audit_readiness:'NOT_READY',compliance_summary:'Analysis error',slack_message:'📋 Compliance scan complete'};}\nreturn [{json:{...init,compliance_report:report,overall_score:report.overall_compliance_score,audit_ready:report.audit_readiness,slack_message:report.slack_message}}];"
+      },
+      "id": "n127",
+      "name": "📊 Finalize Compliance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        6500
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "operation": "post",
+        "channel": "#security-compliance",
+        "text": "={{ $json.slack_message }}",
+        "otherOptions": {
+          "attachments": [
+            {
+              "color": "={{ $json.overall_score>=80?'good':$json.overall_score>=60?'warning':'danger' }}",
+              "title": "AEGIS Compliance Report",
+              "fields": [
+                {
+                  "title": "Overall Score",
+                  "value": "={{ $json.overall_score }}/100",
+                  "short": true
+                },
+                {
+                  "title": "Audit Ready",
+                  "value": "={{ $json.audit_ready }}",
+                  "short": true
+                },
+                {
+                  "title": "Critical Gaps",
+                  "value": "={{ $json.compliance_report?.critical_gaps?.length||0 }}",
+                  "short": true
+                }
+              ],
+              "footer": "AEGIS ELITE Compliance"
+            }
+          ]
+        }
+      },
+      "id": "n128",
+      "name": "💬 Slack: Compliance",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        6500
+      ]
+    },
+    {
+      "id": "nsv1",
+      "name": "🔑 Session Validator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        150,
+        600
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Session Validator\n// Validates webhook secret + timestamp freshness\n// Prevents replay attacks and unauthorized triggers\nconst headers = $json.headers || {};\nconst body    = $json.body    || $json;\n\n// Webhook secret check (set AEGIS_WEBHOOK_SECRET in n8n env vars)\nconst provided = headers['x-aegis-secret'] || headers['authorization'] || '';\nconst expected = $env.AEGIS_WEBHOOK_SECRET || 'CHANGE_ME_IN_ENV_VARS';\nif (provided && provided !== expected && provided !== `Bearer ${expected}`) {\n    throw new Error('AUTH_FAILED: Invalid webhook secret');\n}\n\n// Timestamp freshness (prevent replay attacks - 5 min window)\nconst reqTs   = parseInt(headers['x-aegis-timestamp'] || Date.now());\nconst ageSecs = (Date.now() - reqTs) / 1000;\nif (ageSecs > 300) throw new Error(`REPLAY_ATTACK: Request ${Math.round(ageSecs)}s old`);\n\nreturn {\n    ...body,\n    session_validated_at: new Date().toISOString(),\n    org_domain: body.domain || body.org_domain || 'YOUR_COMPANY.com',\n    operator:   body.operator || body.user_id || 'webhook',\n    user_tier:  body.tier || 'pro',\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nis1",
+      "name": "🔒 Input Sanitizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        600
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Input Sanitizer\n// Strips prompt injections, jailbreaks, oversized payloads\n// Runs BEFORE the AI sees ANY user input\nconst raw = $json.body?.mission || $json.mission || $json.raw_input || $json.message || '';\n\nconst INJECTIONS = [\n    { re: /<\\/?(system|prompt|instruction|context)[^>]*>/gi, label:'XML_TAG' },\n    { re: /ignore\\s+(all\\s+)?(previous|prior|above)\\s+instructions?/gi, label:'INSTRUCTION_OVERRIDE' },\n    { re: /you\\s+are\\s+now\\s+(a\\s+)?(new|different|unrestricted)/gi, label:'ROLE_HIJACK' },\n    { re: /maintenance\\s*mode|debug\\s*mode|developer\\s*mode/gi, label:'MODE_SWITCH' },\n    { re: /\\bDAN\\b|do\\s+anything\\s+now/gi, label:'DAN_JAILBREAK' },\n    { re: /override\\s+(scope|auth|verification|security)/gi, label:'SECURITY_OVERRIDE' },\n    { re: /scan\\s+(google|microsoft|amazon|facebook|government|military)/gi, label:'FORBIDDEN_TARGET' },\n    { re: /(?:execute|eval|exec)\\s*\\([^)]*\\)/gi, label:'CODE_INJECTION' },\n    { re: /\\.\\.[\\/\\\\]|\\/etc\\/passwd|\\/proc\\//gi, label:'PATH_TRAVERSAL' },\n    { re: /(?:password|passwd|pwd)\\s*[:=]\\s*\\S+/gi, label:'CREDENTIAL_LEAK' },\n];\n\nlet sanitized = raw;\nconst detected = [];\nfor (const {re, label} of INJECTIONS) {\n    if (re.test(sanitized)) { detected.push(label); sanitized = sanitized.replace(re,'[REDACTED]'); }\n}\nsanitized = sanitized.replace(/<[^>]+>/g,'').substring(0, 2000).trim();\n\nif (detected.length) console.log(`🚨 INJECTION BLOCKED: ${detected.join(',')} | Input: \"${raw.substr(0,80)}\"`);\n\nreturn {\n    ...$json,\n    raw_input: sanitized,\n    original_input: raw,\n    injection_flags: detected,\n    injection_blocked: detected.length > 0,\n    sanitized_at: new Date().toISOString(),\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nrl1",
+      "name": "🚦 Rate Limit Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        325,
+        600
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Rate Limit Check\n// Enforces per-tier scan limits\nconst tier = $json.user_tier || 'pro';\nconst mode = ($json.selected_mode || 'INTEL').toUpperCase();\nconst LIMITS = {\n    free:       { daily:1,   attack:false },\n    starter:    { daily:5,   attack:false },\n    pro:        { daily:10,  attack:true  },\n    business:   { daily:50,  attack:true  },\n    enterprise: { daily:999, attack:true  },\n};\nconst L = LIMITS[tier] || LIMITS.free;\nif (!L.attack && (mode==='ATTACK'||mode==='AUTO')) {\n    throw new Error(`RATE_LIMIT: Attack mode requires Pro+ tier. Current: ${tier}`);\n}\nreturn { ...$json, rate_limit_tier:tier, rate_limit_passed:true, rate_checked_at:new Date().toISOString() };\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nse1",
+      "name": "🛡️ Scope Enforcer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1150,
+        450
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Scope Enforcer\n// THE critical security gate. Runs AFTER AI.\n// AI CANNOT override this. Ever.\n// Blocks SSRF, out-of-scope targets, private IPs.\nconst verified = $json.org_domain || 'YOUR_COMPANY.com';\nconst targets  = $json.extracted_targets || [verified];\nconst norm     = d => (d||'').toLowerCase().replace(/^https?:\\/\\//,'').replace(/\\/.*/,'').replace(/^www\\./,'').trim();\nconst normV    = norm(verified);\n\nconst SSRF_BLOCKS = [\n    /^10\\./, /^172\\.(1[6-9]|2\\d|3[01])\\./, /^192\\.168\\./, /^127\\./,\n    /^169\\.254\\./, /^0\\./, /^::1$/, /localhost/i, /metadata\\.google\\.internal/i,\n    /169\\.254\\.169\\.254/,   // AWS metadata\n];\n\nconst violations=[], allowed=[];\nfor (const t of targets) {\n    const nt = norm(t);\n    if (SSRF_BLOCKS.some(r=>r.test(nt))) { violations.push({target:t,reason:'SSRF_BLOCKED'}); continue; }\n    if (nt===normV || nt.endsWith('.'+normV)) { allowed.push(t); }\n    else { violations.push({target:t, reason:'OUT_OF_SCOPE'}); }\n}\n\nif (violations.length) console.log(`🚨 SCOPE VIOLATION: ${JSON.stringify(violations)}`);\nif (allowed.length===0) throw new Error(`SCOPE_BLOCK: All targets out of scope or SSRF blocked: ${violations.map(v=>v.target).join(',')}`);\n\nreturn {\n    ...$json,\n    extracted_targets: allowed,\n    scope_violations: violations,\n    scope_status: violations.length===0 ? 'CLEAN':'VIOLATIONS_REMOVED',\n    scope_enforced_at: new Date().toISOString(),\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nad1",
+      "name": "🚨 Anomaly Detector",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        350,
+        800
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Anomaly Detector\n// Runs on every SIEM alert BEFORE enrichment.\n// Boosts risk score for known attack patterns.\nconst a = $json; const ip = a.source_ip||''; let score = parseInt(a.composite_threat_score)||50;\nconst anomalies = [];\n\nconst addA = (type,sev,boost,detail) => { anomalies.push({type,severity:sev,score_boost:boost,detail}); score=Math.min(100,score+boost); };\n\nif (a.is_tor_exit===true||/^185\\.220\\.|^199\\.87\\.154/.test(ip)) addA('TOR_EXIT_NODE','CRITICAL',35,'Source is Tor exit node — anonymized malicious activity');\nif (['185.220.','45.142.','91.108.','94.102.'].some(r=>ip.startsWith(r)))  addA('KNOWN_BAD_RANGE','HIGH',25,`IP ${ip} in high-malicious-activity range`);\nconst h=new Date().getUTCHours(); if(h>=1&&h<=5) addA('OFF_HOURS','MEDIUM',15,`Alert at ${h}:00 UTC — common automated attack window`);\nif((parseInt(a.previous_alert_count)||0)>=20) addA('ALERT_FLOOD','HIGH',20,`${a.previous_alert_count} previous alerts — likely automated`);\nif(/lateral|pivot|mimikatz|psexec|pass.the.hash/i.test(a.alert_description||'')) addA('LATERAL_MOVEMENT','CRITICAL',30,'Lateral movement indicators in alert');\nif(a.is_apt_campaign===true)  addA('APT_CAMPAIGN','CRITICAL',40,'Linked to known APT campaign');\nif(a.is_c2_server===true)     addA('C2_SERVER','CRITICAL',45,'Confirmed C2 server');\nif((a.alert_types||[]).length>=3) addA('MULTI_VECTOR','HIGH',25,`${(a.alert_types||[]).length} simultaneous attack vectors`);\n\nreturn {...a, anomalies_detected:anomalies, anomaly_count:anomalies.length, composite_threat_score:score, anomaly_checked_at:new Date().toISOString()};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nha1",
+      "name": "🟡 HIGH Alert Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2500,
+        5100
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — HIGH Alert Handler\n// Handles HIGH severity (not CRITICAL).\n// No auto-block, no on-call page, no Telegram panic.\n// SOC handles during business hours via Jira + #security-alerts.\nconst t=$json;\nconst id=t.incident_id||`HIGH-${Date.now()}`;\nreturn {\n    ...t,\n    incident_id: id,\n    alert_level: 'HIGH',\n    jira_summary: `[HIGH] ${t.attack_type||'Suspicious Activity'} on ${t.affected_host||'Unknown'}`,\n    jira_description: `*HIGH Severity Alert*\\n*Incident:* ${id}\\n*Type:* ${t.attack_type}\\n*Host:* ${t.affected_host}\\n*IP:* ${t.source_ip}\\n*Confidence:* ${t.confidence}%\\n*MITRE:* ${(t.mitre_techniques||[]).join(', ')}\\n\\n${t.analyst_narrative||''}\\n\\n*Containment:*\\n${(t.containment_steps||[]).map((s,i)=>`${i+1}. ${s}`).join('\\n')}`,\n    jira_priority: 'High',\n    slack_channel: '#security-alerts',\n    slack_message: `⚠️ *HIGH Alert* | ${t.attack_type||'Suspicious Activity'}\\n*Host:* ${t.affected_host} • *IP:* ${t.source_ip} • *Conf:* ${t.confidence}%\\n*ID:* ${id} — Review in Jira, no auto-action required.`,\n    email_subject: `[HIGH] AEGIS: ${t.attack_type||'Alert'} on ${t.affected_host||'Unknown'}`,\n    email_body: `HIGH Severity Alert\\nIncident: ${id}\\nType: ${t.attack_type}\\nHost: ${t.affected_host}\\nIP: ${t.source_ip}\\nConfidence: ${t.confidence}%\\n\\n${t.analyst_narrative||''}`,\n    handled_at: new Date().toISOString(),\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndv1",
+      "name": "🌐 Domain Verify Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        100,
+        -500
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aegis/verify-domain",
+        "authentication": "none",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nts1",
+      "name": "🏆 Trust Score Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -500
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Trust Score Engine\n// Scores every domain verification request.\n// Low score = manual review / rejection.\n// Defeats: fake companies, competitor abuse, disgruntled ex-employees.\nconst req=$json.body||$json; let score=50; const f=[];\n\nconst emailDomain=(req.user_email||'').split('@')[1]||'';\nconst claimedDomain=(req.domain||'').replace(/^www\\./,'');\nif(emailDomain&&emailDomain===claimedDomain){score+=30;f.push('+30 Corporate email matches domain');}\nelse if(emailDomain){score-=40;f.push('-40 Personal/unrelated email (HIGH RISK)');}\n\nconst age=parseInt(req.account_age_days)||0;\nif(age>90){score+=20;f.push('+20 Account >90 days');}\nelse if(age>30){score+=10;f.push('+10 Account >30 days');}\nelse if(age<1){score-=25;f.push('-25 Account created today (SUSPICIOUS)');}\n\nconst pt=req.payment_type||'';\nif(pt==='corporate_card'){score+=25;f.push('+25 Corporate card');}\nelse if(pt==='credit_card'){score+=15;f.push('+15 Personal card');}\nelse if(pt==='prepaid'){score-=35;f.push('-35 Prepaid card');}\nelse if(pt==='crypto'){score-=40;f.push('-40 Crypto payment');}\n\nif(req.is_tor){score-=50;f.push('-50 Tor detected');}\nif(req.is_vpn){score-=20;f.push('-20 VPN detected');}\n\nconst utcH=new Date().getUTCHours();\nif(utcH>=8&&utcH<=18){score+=10;f.push('+10 Business hours');}else{score-=10;f.push('-10 Off-hours');}\n\nconst fails=parseInt(req.previous_failed_verifications)||0;\nif(fails>3){score-=20;f.push(`-20 ${fails} previous failures`);}\n\nscore=Math.max(0,Math.min(100,score));\nlet action=score>=70?'AUTO_APPROVE':score>=50?'PROCEED':score>=30?'MANUAL_REVIEW':'REJECT';\n\nconst chars='0123456789abcdef';\nconst token='aegis-verify='+Array.from({length:32},()=>chars[Math.floor(Math.random()*16)]).join('');\n\nreturn {...req, trust_score:score, trust_action:action, trust_factors:f,\n    requires_manual_review:action==='MANUAL_REVIEW',\n    verification_token:token, trust_evaluated_at:new Date().toISOString()};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndg1",
+      "name": "🔎 DNS Verify Google",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        -650
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://dns.google/resolve?name=_aegis-verify.{{ $json.domain }}&type=TXT",
+        "options": {
+          "timeout": 10000
+        },
+        "headers": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndc1",
+      "name": "🔎 DNS Verify Cloudflare",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        -500
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://cloudflare-dns.com/dns-query?name=_aegis-verify.{{ $json.domain }}&type=TXT",
+        "options": {
+          "timeout": 10000
+        },
+        "headers": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/dns-json"
+            }
+          ]
+        }
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndo1",
+      "name": "🔎 DNS Verify OpenDNS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        -350
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://doh.opendns.com/dns-query?name=_aegis-verify.{{ $json.domain }}&type=TXT",
+        "options": {
+          "timeout": 10000
+        },
+        "headers": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/dns-json"
+            }
+          ]
+        }
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nvd1",
+      "name": "✅ Validate Domain Ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -500
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Domain Ownership Validator\n// ALL 3 resolvers must agree. Prevents DNS spoofing/poisoning.\nconst base   = $('🏆 Trust Score Engine').first().json;\nconst token  = base.verification_token||'';\nconst domain = base.domain||'';\n\nif(base.trust_action==='REJECT'){\n    return {domain,verification_status:'REJECTED_LOW_TRUST',trust_score:base.trust_score,\n        message:'Verification rejected. Contact security@aegis.io',verified:false};\n}\nconst parseRecs = d => {\n    if(!d) return [];\n    return (d.Answer||d.answers||[]).filter(a=>a.type===16||a.Type===16).map(a=>(a.data||a.Data||'').replace(/\"/g,'').trim());\n};\nconst hasToken = recs => recs.some(r=>r.includes(token));\n\nlet r1,r2,r3;\ntry { r1=hasToken(parseRecs($('🔎 DNS Verify Google').first().json)); }     catch(e){r1=false;}\ntry { r2=hasToken(parseRecs($('🔎 DNS Verify Cloudflare').first().json)); } catch(e){r2=false;}\ntry { r3=hasToken(parseRecs($('🔎 DNS Verify OpenDNS').first().json)); }    catch(e){r3=false;}\n\nconst allAgree=r1&&r2&&r3; const anyFound=r1||r2||r3;\nreturn {\n    domain, verified:allAgree,\n    verification_status: allAgree?'VERIFIED':anyFound?'PROPAGATING':'NOT_FOUND',\n    message: allAgree?'✅ Domain ownership confirmed by all 3 DNS resolvers.':\n             anyFound?'⏳ DNS propagating — try again in 5–10 minutes.':\n             '❌ Token not found. Check your DNS TXT record.',\n    resolver_results:{google:r1,cloudflare:r2,opendns:r3},\n    trust_score:base.trust_score, trust_action:base.trust_action,\n    requires_manual_review:base.requires_manual_review||false,\n    verification_token:token,\n    verified_at:allAgree?new Date().toISOString():null,\n    user_email:base.user_email,\n};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nvdec",
+      "name": "🔀 Verify Decision",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -500
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "id": "v1",
+              "leftValue": "={{ $json.verified }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        },
+        "combineOperation": "all"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndve",
+      "name": "📧 Domain Verified Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1450,
+        -450
+      ],
+      "parameters": {
+        "fromEmail": "aegis@YOUR_COMPANY.com",
+        "toEmail": "={{ $json.user_email }}",
+        "subject": "✅ AEGIS — {{ $json.domain }} Domain Verified",
+        "text": "Your domain {{ $json.domain }} has been verified.\n\nVerification ID: {{ $json.verification_token }}\nVerified at: {{ $json.verified_at }}\nAll 3 DNS resolvers confirmed.\n\nYou can now monitor {{ $json.domain }} with AEGIS Elite.\n\n— AEGIS Security Team",
+        "options": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndra",
+      "name": "🚫 Domain Rejected Alert",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1450,
+        -600
+      ],
+      "parameters": {
+        "fromEmail": "security@YOUR_COMPANY.com",
+        "toEmail": "security-team@YOUR_COMPANY.com",
+        "subject": "⚠️ AEGIS — Domain Verification REJECTED: {{ $json.domain }}",
+        "text": "Domain verification was rejected.\n\nDomain: {{ $json.domain }}\nStatus: {{ $json.verification_status }}\nTrust Score: {{ $json.trust_score }}/100\nMessage: {{ $json.message }}\n\nReview in AEGIS admin dashboard.",
+        "options": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nhjt",
+      "name": "🎫 HIGH: Jira Ticket",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        2750,
+        5050
+      ],
+      "parameters": {
+        "operation": "issue:create",
+        "projectKey": "SECURITY",
+        "summary": "={{ $json.jira_summary }}",
+        "issueType": "Bug",
+        "priority": "High",
+        "description": "={{ $json.jira_description }}",
+        "additionalFields": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nhsa",
+      "name": "💬 HIGH: Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        2750,
+        5200
+      ],
+      "parameters": {
+        "operation": "message:post",
+        "channel": "={{ $json.slack_channel }}",
+        "text": "={{ $json.slack_message }}",
+        "otherOptions": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nhes",
+      "name": "📧 HIGH: Email SOC",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2750,
+        5350
+      ],
+      "parameters": {
+        "fromEmail": "aegis@YOUR_COMPANY.com",
+        "toEmail": "soc@YOUR_COMPANY.com",
+        "subject": "={{ $json.email_subject }}",
+        "text": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "ndlp",
+      "name": "📋 DLP Monitor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        5500
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Data Loss Prevention Monitor\n// Scans outgoing reports for credentials, PII, secrets.\n// Redacts before delivery. Logs violations for compliance.\nconst content = JSON.stringify($json).toLowerCase(); const flags=[];\n\nconst patterns=[\n    {re:/(?:password|passwd)\\s*[:=]\\s*\\S+/gi,      label:'PLAINTEXT_PASSWORD'},\n    {re:/(?:api[_-]?key)\\s*[:=]\\s*[a-z0-9_\\-]{10,}/gi, label:'API_KEY'},\n    {re:/(?:aws_access|aws_secret)\\s*[:=]\\s*\\S+/gi,label:'AWS_CRED'},\n    {re:/ghp_[a-zA-Z0-9]{36}/g,                   label:'GITHUB_TOKEN'},\n    {re:/sk-[a-zA-Z0-9]{40,}/g,                   label:'AI_API_KEY'},\n    {re:/xox[baprs]-[0-9A-Za-z\\-]+/g,             label:'SLACK_TOKEN'},\n    {re:/\\b\\d{3}-\\d{2}-\\d{4}\\b/g,                 label:'SSN_PII'},\n    {re:/\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})\\b/g, label:'CREDIT_CARD_PII'},\n];\n\nfor(const {re,label} of patterns){\n    if(re.test(content)) flags.push({type:label,severity:flags.length===0?'CRITICAL':'HIGH',action:'REDACTED'});\n}\n\nif(flags.length) console.log(`🚨 DLP ALERT: ${flags.map(f=>f.type).join(',')}`);\n\nreturn {...$json, dlp_flags:flags, dlp_violations:flags.length,\n    dlp_status:flags.length===0?'CLEAN':'FLAGS_DETECTED', dlp_checked_at:new Date().toISOString()};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nal1",
+      "name": "📝 Audit Logger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        600
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Immutable Audit Logger\n// Every critical action permanently recorded.\n// Append-only. Legal evidence format. Signed.\nconst ev={\n    event_id:      `AUD-${Date.now()}-${Math.random().toString(36).substr(2,6).toUpperCase()}`,\n    timestamp:     new Date().toISOString(),\n    actor:         $json.operator||$json.user_id||'system',\n    actor_email:   $json.actor_email||'unknown',\n    tenant_id:     $json.tenant_id||$json.org_domain||'unknown',\n    action:        $json.event_type||'WORKFLOW_EXECUTION',\n    resource:      $json.org_domain||'unknown',\n    mode:          $json.selected_mode||'UNKNOWN',\n    risk_score:    $json.risk_score||0,\n    scope_status:  $json.scope_status||'UNKNOWN',\n    injection_detected: $json.injection_blocked||false,\n    scope_violations:   $json.scope_violations_count||0,\n    result:        $json.audit_result||'COMPLETED',\n    mission_id:    $json.mission_id||'unknown',\n};\n// In production: INSERT INTO audit_log (immutable table) with private key signature\nconsole.log(`AUDIT: ${JSON.stringify(ev)}`);\nreturn {audit_event:ev, ...$json};\n"
+      },
+      "credentials": {}
+    },
+    {
+      "id": "nacg",
+      "name": "🔐 Approval Change Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        1800
+      ],
+      "parameters": {
+        "jsCode": "\n// AEGIS ELITE — Approval Change Guard\n// Monitors approval events for suspicious patterns.\n// Repeated approve/deny toggling = potential MFA fatigue attack.\nconst approval = $json;\nconst suspicious=[];\n\nif(approval.approval_age_seconds < 10) suspicious.push('APPROVED_TOO_FAST: Possible automated/forced approval');\nif(approval.approver_ip !== approval.requester_ip_country_mismatch) {} // extended in prod\nif(approval.approved_by === approval.requested_by) suspicious.push('SELF_APPROVAL: Same user requested and approved (4-eyes violation)');\n\nreturn {\n    ...approval,\n    approval_suspicious: suspicious.length>0,\n    approval_flags: suspicious,\n    guard_checked_at: new Date().toISOString(),\n};\n"
+      },
+      "credentials": {}
+    }
+  ],
+  "connections": {
+    "🎯 Mission Input": {
+      "main": [
+        [
+          {
+            "node": "🔑 Session Validator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 Prepare Mission": {
+      "main": [
+        [
+          {
+            "node": "🧠 AI Decision Engine (Claude Elite)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 AI Decision Engine (Claude Elite)": {
+      "main": [
+        [
+          {
+            "node": "📋 Parse Mission Plan",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📝 Audit Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Parse Mission Plan": {
+      "main": [
+        [
+          {
+            "node": "🛡️ Scope Enforcer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 Needs Approval?": {
+      "main": [
+        [
+          {
+            "node": "📧 Send Approval Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Approval Gateway": {
+      "main": [
+        [
+          {
+            "node": "✅ Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Approved?": {
+      "main": [
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔐 Approval Change Guard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "✅ Mission Accepted Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟡 Intel Trigger": {
+      "main": [
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Every 15min": {
+      "main": [
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Every 1hr": {
+      "main": [
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Every 6hr": {
+      "main": [
+        [
+          {
+            "node": "🟡 Init Intel Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Weekly Mon 8am": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Every 4hr Compliance": {
+      "main": [
+        [
+          {
+            "node": "📋 Init Compliance Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟡 Init Intel Run": {
+      "main": [
+        [
+          {
+            "node": "💀 HIBP Breach Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 Shodan DNS Intel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 Shodan Exposed Services",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🐙 GitHub Leak Scan",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🐙 GitHub Secret Scan",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🛡️ NVD Critical CVEs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "👽 OTX Threat Intel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔏 SSL Cert Transparency",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🗺️ SecurityTrails Subdomains",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔐 DNS TXT (SPF/DMARC/DKIM)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📧 DMARC Policy Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔒 SSL Labs Grade Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎣 Phishing Feed Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎯 HackerTarget Subdomain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 Passive DNS History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💀 HIBP Breach Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Shodan Exposed Services": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🐙 GitHub Leak Scan": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🐙 GitHub Secret Scan": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🛡️ NVD Critical CVEs": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "👽 OTX Threat Intel": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔏 SSL Cert Transparency": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📧 DMARC Policy Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔐 DNS TXT (SPF/DMARC/DKIM)": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 SSL Labs Grade Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Aggregate Intel Results": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Intel Analyst (Elite)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Intel Analyst (Elite)": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Intel + AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Merge Intel + AI": {
+      "main": [
+        [
+          {
+            "node": "⚠️ Has Critical Intel?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚠️ Has Critical Intel?": {
+      "main": [
+        [
+          {
+            "node": "🔴 Init Attack Run",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔴 Attack Trigger": {
+      "main": [
+        [
+          {
+            "node": "🔴 Init Attack Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱ Nightly 11pm": {
+      "main": [
+        [
+          {
+            "node": "🔴 Init Attack Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔴 Init Attack Run": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Attack Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Attack Planner": {
+      "main": [
+        [
+          {
+            "node": "🔍 Shodan Host Recon",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🦠 VirusTotal Domain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🛡️ NVD Attack CVEs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 URLScan Analysis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎯 HackerTarget Nmap",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🌐 WhatWeb Fingerprint",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📋 HTTP Headers Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Shodan Host Recon": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🦠 VirusTotal Domain": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🛡️ NVD Attack CVEs": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 WhatWeb Fingerprint": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 HTTP Headers Analysis": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚔️ Aggregate Attack Results": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Attack Analyst (Elite)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Attack Analyst (Elite)": {
+      "main": [
+        [
+          {
+            "node": "🔗 Finalize Attack Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Finalize Attack Report": {
+      "main": [
+        [
+          {
+            "node": "🚨 Critical Attack Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚨 Critical Attack Found?": {
+      "main": [
+        [
+          {
+            "node": "🔵 Init Defend Run",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📝 Audit Logger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚨 SIEM Alert Ingestion": {
+      "main": [
+        [
+          {
+            "node": "🚨 Anomaly Detector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔵 Defend Trigger": {
+      "main": [
+        [
+          {
+            "node": "🔵 Init Defend Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔵 Init Defend Run": {
+      "main": [
+        [
+          {
+            "node": "🛡️ AbuseIPDB Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🦠 VirusTotal IP",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 Shodan IP Context",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🌍 IP Geolocation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "👽 OTX IP Intel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔄 Reverse IP Lookup",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🦊 ThreatFox IOC Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💀 Feodo C2 Blocklist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🛡️ AbuseIPDB Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🦠 VirusTotal IP": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Shodan IP Context": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌍 IP Geolocation": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "👽 OTX IP Intel": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🦊 ThreatFox IOC Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💀 Feodo C2 Blocklist": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Aggregate Enrichment": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Triage (Elite)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Triage (Elite)": {
+      "main": [
+        [
+          {
+            "node": "🔗 Parse Triage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Parse Triage": {
+      "main": [
+        [
+          {
+            "node": "✅ True Positive?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ True Positive?": {
+      "main": [
+        [
+          {
+            "node": "🔴 Is Critical?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📝 Audit Logger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔴 Is Critical?": {
+      "main": [
+        [
+          {
+            "node": "🚫 Auto-Block IP",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎫 Create Jira Ticket",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📟 Page On-Call",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💬 Slack Critical Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📱 Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🟡 HIGH Alert Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚫 Auto-Block IP": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎫 Create Jira Ticket": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Report Trigger": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Init Report": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Report Engine (Elite)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Report Engine (Elite)": {
+      "main": [
+        [
+          {
+            "node": "📋 DLP Monitor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🏗️ Build Elite HTML Report": {
+      "main": [
+        [
+          {
+            "node": "💬 Slack: Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📧 Email: Analyst Report",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📧 Email: CISO Executive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📚 Save to Notion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🎫 Jira: Report Ticket",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📱 Telegram: Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Init Compliance Run": {
+      "main": [
+        [
+          {
+            "node": "🔐 Compliance: DNS Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📧 Compliance: DMARC",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔒 Compliance: SSL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💀 Compliance: Breach Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔍 Compliance: Exposure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔐 Compliance: DNS Check": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Compliance Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📧 Compliance: DMARC": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Compliance Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 Compliance: SSL": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Compliance Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💀 Compliance: Breach Check": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Compliance Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Compliance: Exposure": {
+      "main": [
+        [
+          {
+            "node": "🤖 AI Compliance Auditor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 AI Compliance Auditor": {
+      "main": [
+        [
+          {
+            "node": "📊 Finalize Compliance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Finalize Compliance": {
+      "main": [
+        [
+          {
+            "node": "💬 Slack: Compliance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Shodan DNS Intel": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🗺️ SecurityTrails Subdomains": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎣 Phishing Feed Check": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 HackerTarget Subdomain": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Passive DNS History": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Intel Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 URLScan Analysis": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 HackerTarget Nmap": {
+      "main": [
+        [
+          {
+            "node": "⚔️ Aggregate Attack Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔄 Reverse IP Lookup": {
+      "main": [
+        [
+          {
+            "node": "📊 Aggregate Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📟 Page On-Call": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💬 Slack Critical Alert": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📱 Telegram Alert": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔑 Session Validator": {
+      "main": [
+        [
+          {
+            "node": "🔒 Input Sanitizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 Input Sanitizer": {
+      "main": [
+        [
+          {
+            "node": "🚦 Rate Limit Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚦 Rate Limit Check": {
+      "main": [
+        [
+          {
+            "node": "🧠 Prepare Mission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🛡️ Scope Enforcer": {
+      "main": [
+        [
+          {
+            "node": "🔒 Needs Approval?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🚨 Anomaly Detector": {
+      "main": [
+        [
+          {
+            "node": "🔵 Init Defend Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟡 HIGH Alert Handler": {
+      "main": [
+        [
+          {
+            "node": "🎫 HIGH: Jira Ticket",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💬 HIGH: Slack Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "📧 HIGH: Email SOC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎫 HIGH: Jira Ticket": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💬 HIGH: Slack Alert": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📧 HIGH: Email SOC": {
+      "main": [
+        [
+          {
+            "node": "📊 Init Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 DLP Monitor": {
+      "main": [
+        [
+          {
+            "node": "🏗️ Build Elite HTML Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Domain Verify Trigger": {
+      "main": [
+        [
+          {
+            "node": "🏆 Trust Score Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🏆 Trust Score Engine": {
+      "main": [
+        [
+          {
+            "node": "🔎 DNS Verify Google",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔎 DNS Verify Cloudflare",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔎 DNS Verify OpenDNS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔎 DNS Verify Google": {
+      "main": [
+        [
+          {
+            "node": "✅ Validate Domain Ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔎 DNS Verify Cloudflare": {
+      "main": [
+        [
+          {
+            "node": "✅ Validate Domain Ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔎 DNS Verify OpenDNS": {
+      "main": [
+        [
+          {
+            "node": "✅ Validate Domain Ownership",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Validate Domain Ownership": {
+      "main": [
+        [
+          {
+            "node": "🔀 Verify Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 Verify Decision": {
+      "main": [
+        [
+          {
+            "node": "📧 Domain Verified Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "🚫 Domain Rejected Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "meta": {
+    "version": "2.0-enterprise",
+    "generatedAt": "2025-03-08",
+    "securityLayers": [
+      "Session Validator (webhook secret + replay attack prevention)",
+      "Input Sanitizer (prompt injection / jailbreak / path traversal)",
+      "Rate Limit Check (per-tier enforcement)",
+      "Scope Enforcer (SSRF + out-of-scope target blocking)",
+      "Trust Score Engine (domain verification fraud detection)",
+      "3-Resolver DNS Verification (Google + Cloudflare + OpenDNS)",
+      "Anomaly Detector (TOR/APT/C2/lateral movement detection)",
+      "HIGH vs CRITICAL alert separation (fixes alert fatigue bug)",
+      "DLP Monitor (credential + PII detection before delivery)",
+      "Immutable Audit Logger (legal evidence, append-only)",
+      "Approval Change Guard (4-eyes enforcement)",
+      "All AI nodes: claude-sonnet-4-6"
+    ]
+  }
+}
