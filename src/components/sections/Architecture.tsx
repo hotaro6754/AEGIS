@@ -11,12 +11,12 @@ interface Layer {
 }
 
 const layers: Layer[] = [
-  { id: 12, name: "AI Model", desc: "Claude 3.5 Sonnet Engine", color: "#C9A962" },
-  { id: 11, name: "Approval Guard", desc: "4-Eyes Human-in-the-loop", color: "#C9A962" },
-  { id: 10, name: "Audit Logger", desc: "Immutable Chain of Custody", color: "#C9A962" },
-  { id: 9, name: "DLP Monitor", desc: "Data Loss Prevention", color: "#7DD3FC" },
-  { id: 8, name: "Decision Engine", desc: "111-Node Architecture", color: "#7DD3FC" },
-  { id: 7, name: "Intel Aggregator", desc: "15+ OSINT Sources", color: "#7DD3FC" },
+  { id: 12, name: "AI Model", desc: "Claude 3.5 Sonnet Engine", color: "var(--primary)" },
+  { id: 11, name: "Approval Guard", desc: "4-Eyes Human-in-the-loop", color: "var(--primary)" },
+  { id: 10, name: "Audit Logger", desc: "Immutable Chain of Custody", color: "var(--primary)" },
+  { id: 9, name: "DLP Monitor", desc: "Data Loss Prevention", color: "var(--accent-blue)" },
+  { id: 8, name: "Decision Engine", desc: "111-Node Architecture", color: "var(--accent-blue)" },
+  { id: 7, name: "Intel Aggregator", desc: "15+ OSINT Sources", color: "var(--accent-blue)" },
   { id: 6, name: "Threat Triage", desc: "AI-Powered Classification", color: "#F5F5F7" },
   { id: 5, name: "Scope Enforcer", desc: "Hardcoded Domain Gates", color: "#F5F5F7" },
   { id: 4, name: "Asset Discovery", desc: "Continuous Attack Surface", color: "#F5F5F7" },
@@ -32,11 +32,11 @@ export default function Architecture() {
     offset: ["start end", "end start"],
   });
 
-  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
+  const springConfig = { stiffness: 60, damping: 20, restDelta: 0.001 };
   const smoothProgress = useSpring(scrollYProgress, springConfig);
 
   return (
-    <section ref={containerRef} className="py-60 relative overflow-hidden">
+    <section ref={containerRef} className="py-80 relative overflow-hidden">
       {/* Background Ambient Orbs */}
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10" />
       <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-accent-blue/5 rounded-full blur-[140px] -z-10" />
@@ -51,37 +51,36 @@ export default function Architecture() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <span className="text-primary text-xs font-medium tracking-[0.3em] uppercase mb-6 block">
-                Enterprise Grade Infrastructure
+              <span className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-8 block">
+                Infrastructure
               </span>
-              <h2 className="text-5xl md:text-6xl font-bold mb-10 font-satoshi leading-[1.1]">
+              <h2 className="text-5xl md:text-7xl font-bold mb-10 font-satoshi leading-[1.05]">
                 The 12-Layer <br />
-                <span className="text-muted/60">Security Architecture</span>
+                <span className="text-muted/40 italic">Security Stack.</span>
               </h2>
-              <p className="text-muted text-xl mb-12 max-w-xl leading-relaxed">
-                AEGIS ELITE isn't just a chatbot. It's a vertically-integrated security stack
-                engineered with redundant validation layers, ensuring every action is
-                authorized, audited, and safe.
+              <p className="text-muted text-xl mb-16 max-w-xl leading-relaxed">
+                A vertically-integrated architecture designed for zero fatigue and
+                absolute security validation. Each layer is engineered for mission-critical scale.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div className="p-6 glass rounded-xl border border-glass-border group hover:border-primary/30 transition-colors">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold mb-4 group-hover:scale-110 transition-transform">111</div>
-                    <h4 className="font-bold text-foreground mb-2">Node Architecture</h4>
-                    <p className="text-sm text-muted leading-relaxed">A massive n8n-powered orchestration system handling thousands of signals.</p>
+                <div className="p-8 glass rounded-[2rem] border border-glass-border group hover:border-primary/40 transition-all duration-700">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-xl mb-6 group-hover:scale-110 transition-transform duration-700 border border-primary/20">111</div>
+                    <h4 className="font-bold text-foreground text-xl mb-3 font-satoshi">Node Architecture</h4>
+                    <p className="text-muted text-base leading-relaxed">High-availability orchestration handling thousands of signals.</p>
                 </div>
-                <div className="p-6 glass rounded-xl border border-glass-border group hover:border-accent-blue/30 transition-colors">
-                    <div className="w-12 h-12 rounded-lg bg-accent-blue/10 flex items-center justify-center text-accent-blue font-bold mb-4 group-hover:scale-110 transition-transform">AI</div>
-                    <h4 className="font-bold text-foreground mb-2">Claude 3.5 Sonnet</h4>
-                    <p className="text-sm text-muted leading-relaxed">Advanced reasoning capabilities for complex threat triage and autonomous red teaming.</p>
+                <div className="p-8 glass rounded-[2rem] border border-glass-border group hover:border-accent-blue/40 transition-all duration-700">
+                    <div className="w-16 h-16 rounded-2xl bg-accent-blue/10 flex items-center justify-center text-accent-blue font-black text-xl mb-6 group-hover:scale-110 transition-transform duration-700 border border-accent-blue/20">AI</div>
+                    <h4 className="font-bold text-foreground text-xl mb-3 font-satoshi">Claude 3.5 Sonnet</h4>
+                    <p className="text-muted text-base leading-relaxed">State-of-the-art reasoning for complex threat investigations.</p>
                 </div>
               </div>
             </motion.div>
           </div>
 
           {/* Right Side: 3D Stack */}
-          <div className="lg:w-1/2 relative h-[700px] w-full flex items-center justify-center perspective-[1500px]">
-             <div className="relative w-full max-w-[500px] h-[500px]">
+          <div className="lg:w-1/2 relative h-[800px] w-full flex items-center justify-center perspective-[2000px]">
+             <div className="relative w-full max-w-[600px] h-[600px]">
                 {layers.map((layer, index) => (
                   <ArchitectureLayer
                     key={layer.id}
@@ -111,45 +110,49 @@ function ArchitectureLayer({
   smoothProgress: MotionValue<number>
 }) {
   const reverseIndex = total - 1 - index;
-  const yOffset = reverseIndex * -35;
-  const expansion = 80;
+  const yOffset = reverseIndex * -30;
 
-  // Animation values
-  const y = useTransform(smoothProgress, [0, 0.4, 0.6, 1], [yOffset, reverseIndex * -expansion, reverseIndex * -expansion, reverseIndex * -expansion * 1.2]);
-  const rotateX = useTransform(smoothProgress, [0, 0.4, 0.6, 1], [45, 30, 25, 15]);
+  // Expand layers significantly as we scroll
+  const expansion = 120;
+
+  // Animation values: Start collapsed, then expand to show all layers clearly
+  const y = useTransform(smoothProgress, [0, 0.5, 1], [yOffset, reverseIndex * -expansion, reverseIndex * -expansion * 1.5]);
+  const rotateX = useTransform(smoothProgress, [0, 0.5, 1], [40, 25, 15]);
+  const rotateY = useTransform(smoothProgress, [0, 0.5, 1], [0, 5, 0]);
   const opacity = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
-  const scale = useTransform(smoothProgress, [0, 0.4, 0.6, 1], [0.85, 1, 1, 0.95]);
-  const blur = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [4, 0, 0, 4]);
+  const scale = useTransform(smoothProgress, [0, 0.5, 1], [0.9, 1.1, 1]);
+  const blur = useTransform(smoothProgress, [0, 0.1, 0.9, 1], [8, 0, 0, 8]);
 
   return (
     <motion.div
       style={{
         y,
         rotateX,
+        rotateY,
         opacity,
         scale,
         filter: `blur(${blur}px)`,
         zIndex: layer.id,
         borderLeftColor: layer.color,
       }}
-      className="absolute inset-0 h-20 glass rounded-2xl flex items-center px-8 border-l-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-glass-border/50"
+      className="absolute inset-0 h-24 glass rounded-3xl flex items-center px-10 border-l-8 shadow-[0_30px_60px_rgba(0,0,0,0.6)] border border-glass-border/40 backdrop-blur-3xl"
     >
-      <div className="flex items-center justify-between w-full">
-         <div className="flex items-center gap-6">
-           <span className="text-xs font-mono text-primary/60 font-bold">{layer.id.toString().padStart(2, '0')}</span>
+      <div className="flex items-center justify-between w-full relative z-10">
+         <div className="flex items-center gap-8">
+           <span className="text-sm font-mono text-primary/80 font-black">{layer.id.toString().padStart(2, '0')}</span>
            <div>
-              <span className="font-bold text-base tracking-wide block">{layer.name}</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted block sm:hidden mt-1">{layer.desc}</span>
+              <span className="font-bold text-xl tracking-tight block font-satoshi">{layer.name}</span>
+              <span className="text-[11px] uppercase tracking-[0.3em] text-muted block sm:hidden mt-2 font-black">{layer.desc}</span>
            </div>
          </div>
-         <span className="text-[10px] uppercase tracking-[0.3em] text-muted hidden sm:block font-medium">{layer.desc}</span>
+         <span className="text-[11px] uppercase tracking-[0.4em] text-muted hidden sm:block font-black opacity-60 group-hover:opacity-100 transition-opacity">{layer.desc}</span>
       </div>
 
       {/* Decorative scan line effect */}
       <motion.div
         animate={{ x: ["-100%", "200%"] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: index * 0.2 }}
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 pointer-events-none"
+        transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: index * 0.3 }}
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent skew-x-12 pointer-events-none"
       />
     </motion.div>
   );

@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    return scrollY.onChange((latest) => {
+    return scrollY.on("change", (latest) => {
       setIsScrolled(latest > 50);
     });
   }, [scrollY]);
@@ -41,13 +41,13 @@ export default function Navbar() {
 
         {/* Center: Menu */}
         <div className={`hidden md:flex items-center gap-10 px-12 py-4 rounded-full transition-all duration-700 ${
-          isScrolled ? "glass border border-white/5 shadow-2xl" : "bg-transparent"
+          isScrolled ? "glass border border-white/5 shadow-2xl backdrop-blur-3xl" : "bg-transparent"
         }`}>
           {menuItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
-              className="text-[11px] font-black uppercase tracking-[0.3em] text-muted hover:text-primary transition-all duration-300"
+              className="text-[11px] font-black uppercase tracking-[0.3em] text-muted hover:text-primary transition-all duration-300 font-satoshi"
             >
               {item.name}
             </a>
@@ -56,7 +56,7 @@ export default function Navbar() {
 
         {/* Right: CTA */}
         <div className="hidden sm:block">
-          <MagneticButton variant="outline" className="px-10 py-3 text-[10px] font-black uppercase tracking-[0.3em]">
+          <MagneticButton variant="outline" className="px-10 py-3 text-[10px] font-black uppercase tracking-[0.4em] border-primary/20 hover:border-primary/50 text-foreground transition-all">
             Request Access
           </MagneticButton>
         </div>

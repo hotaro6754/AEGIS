@@ -28,7 +28,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-geist antialiased`}
       >
-        <div className="noise-overlay" />
         <SmoothScroll>
           {children}
         </SmoothScroll>
