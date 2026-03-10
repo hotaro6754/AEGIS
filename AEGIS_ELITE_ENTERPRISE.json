@@ -238,7 +238,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst input=body.input||'';\nconst operator=body.operator||'security-team@company.com';\nconst domain=body.org_domain||'YOUR_COMPANY.com';\nconst ts=new Date().toISOString();\nconst mid='AEGIS-'+Date.now();\nreturn [{json:{mission_id:mid,raw_input:input,operator:operator,org_domain:domain,timestamp:ts,status:'parsing',version:'ELITE-2.0'}}];"
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst input=body.input||'';\nconst operator=body.operator||'security-team@company.com';\nconst domain=body.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com';\nconst ts=new Date().toISOString();\nconst mid='AEGIS-'+Date.now();\nreturn [{json:{mission_id:mid,raw_input:input,operator:operator,org_domain:domain,timestamp:ts,status:'parsing',version:'ELITE-2.0'}}];"
       },
       "id": "n020",
       "name": "🧠 Prepare Mission",
@@ -280,7 +280,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw=$input.first().json.content[0].text;\nlet plan;\ntry{plan=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){throw new Error('Brain parse fail: '+e.message);}\nconst prev=$('🧠 Prepare Mission').first().json;\nplan.mission_id=prev.mission_id;\nplan.operator=prev.operator;\nplan.org_domain=prev.org_domain;\nplan.timestamp=prev.timestamp;\nplan.raw_input=prev.raw_input;\nplan.version='ELITE-2.0';\nreturn [{json:plan}];"
+        "jsCode": "const raw=$input.first().json.content[0].text;\nlet plan;\ntry{plan=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){throw new Error('AEGIS AI parse failure. Raw output: '+raw.substring(0,200)+'... Error: '+e.message);}\nconst prev=$('🧠 Prepare Mission').first().json;\nplan.mission_id=prev.mission_id;\nplan.operator=prev.operator;\nplan.org_domain=prev.org_domain;\nplan.timestamp=prev.timestamp;\nplan.raw_input=prev.raw_input;\nplan.version='ELITE-2.0';\nreturn [{json:plan}];"
       },
       "id": "n022",
       "name": "📋 Parse Mission Plan",
@@ -321,7 +321,7 @@
         "toEmail": "={{ $json.operator }}",
         "subject": "=⚔️ AEGIS ELITE Mission Approval — {{ $json.mission_id }} [{{ $json.overall_risk }} RISK]",
         "emailType": "html",
-        "message": "=<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#050510;color:#e0e0f0;padding:24px}.wrap{max-width:700px;margin:0 auto}.header{background:linear-gradient(135deg,#0d0d2e,#1a0d3e);border:1px solid #3a1a6e;border-radius:12px;padding:28px;margin-bottom:20px}.logo{font-size:22px;font-weight:900;color:#8844ff;letter-spacing:2px}.subtitle{color:#888;font-size:13px;margin-top:4px}.card{background:#0d0d1e;border:1px solid #1e1e3e;border-radius:10px;padding:20px;margin:14px 0}.card-title{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#4488ff;margin-bottom:12px;font-weight:700}.risk-critical{color:#ff2244;font-size:36px;font-weight:900}.risk-high{color:#ff6600;font-size:36px;font-weight:900}.risk-medium{color:#ffcc00;font-size:36px;font-weight:900}.risk-low{color:#00dd88;font-size:36px;font-weight:900}.step{background:#080818;border-left:3px solid #4488ff;padding:12px 16px;margin:8px 0;border-radius:0 6px 6px 0}.step.confirm{border-left-color:#ff2244}.step-meta{font-size:11px;color:#666;margin-top:6px}.btn{display:inline-block;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;margin:8px;letter-spacing:1px}.btn-yes{background:linear-gradient(135deg,#00cc44,#00aa33);color:#000}.btn-no{background:linear-gradient(135deg,#ff2244,#cc1133);color:#fff}.footer{text-align:center;color:#444;font-size:11px;margin-top:24px;padding-top:16px;border-top:1px solid #1a1a2e}</style></head><body><div class='wrap'><div class='header'><div class='logo'>🛡️ AEGIS ELITE</div><div class='subtitle'>Autonomous Enterprise & Guardian Intelligence System</div></div><div class='card'><div class='card-title'>Mission Briefing</div><p><strong>ID:</strong> {{ $json.mission_id }}</p><p style='margin-top:8px'><strong>Request:</strong> {{ $json.raw_input }}</p><p style='margin-top:8px'><strong>Interpretation:</strong> {{ $json.operator_briefing }}</p><p style='margin-top:8px'><strong>Mode:</strong> {{ $json.selected_mode }} &mdash; {{ $json.mode_reasoning }}</p><p style='margin-top:8px'><strong>Duration:</strong> {{ $json.estimated_duration }}</p></div><div class='card'><div class='card-title'>Risk Assessment</div><div class='risk-{{ $json.overall_risk.toLowerCase() }}'>{{ $json.overall_risk }}</div><p style='color:#888;margin-top:8px'>{{ $json.threat_context }}</p></div><div class='card'><div class='card-title'>Execution Plan — Steps Needing Approval Are Red</div>{{ $json.execution_plan.map(s=>`<div class='step ${s.autonomy==='CONFIRM_REQUIRED'?'confirm':''}'><strong>Step ${s.step} [${s.phase}]</strong> ${s.autonomy==='CONFIRM_REQUIRED'?'🔴 APPROVAL REQUIRED':' AUTO'}<br/>${s.action}<div class='step-meta'>Risk: ${s.risk_score}/100 &bull; ${s.risk_reason} ${s.mitre_technique?'&bull; MITRE: '+s.mitre_technique:''}</div></div>`).join('') }}</div><div class='card'><div class='card-title'>Starting Automatically (Low Risk)</div><ul style='padding-left:20px'>{{ $json.immediate_actions.map(a=>`<li style='margin:6px 0'>${a}</li>`).join('') }}</ul></div><div style='text-align:center;padding:24px'><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=YES&token=AEGIS_SECURE_2024' class='btn btn-yes'>✅ APPROVE MISSION</a><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=NO&token=AEGIS_SECURE_2024' class='btn btn-no'>❌ DENY MISSION</a></div><div class='footer'>AEGIS ELITE v2.0 &bull; {{ $json.timestamp }} &bull; {{ $json.mission_id }}</div></div></body></html>"
+        "message": "=<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#050510;color:#e0e0f0;padding:24px}.wrap{max-width:700px;margin:0 auto}.header{background:linear-gradient(135deg,#0d0d2e,#1a0d3e);border:1px solid #3a1a6e;border-radius:12px;padding:28px;margin-bottom:20px}.logo{font-size:22px;font-weight:900;color:#8844ff;letter-spacing:2px}.subtitle{color:#888;font-size:13px;margin-top:4px}.card{background:#0d0d1e;border:1px solid #1e1e3e;border-radius:10px;padding:20px;margin:14px 0}.card-title{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#4488ff;margin-bottom:12px;font-weight:700}.risk-critical{color:#ff2244;font-size:36px;font-weight:900}.risk-high{color:#ff6600;font-size:36px;font-weight:900}.risk-medium{color:#ffcc00;font-size:36px;font-weight:900}.risk-low{color:#00dd88;font-size:36px;font-weight:900}.step{background:#080818;border-left:3px solid #4488ff;padding:12px 16px;margin:8px 0;border-radius:0 6px 6px 0}.step.confirm{border-left-color:#ff2244}.step-meta{font-size:11px;color:#666;margin-top:6px}.btn{display:inline-block;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;margin:8px;letter-spacing:1px}.btn-yes{background:linear-gradient(135deg,#00cc44,#00aa33);color:#000}.btn-no{background:linear-gradient(135deg,#ff2244,#cc1133);color:#fff}.footer{text-align:center;color:#444;font-size:11px;margin-top:24px;padding-top:16px;border-top:1px solid #1a1a2e}</style></head><body><div class='wrap'><div class='header'><div class='logo'>🛡️ AEGIS ELITE</div><div class='subtitle'>Autonomous Enterprise & Guardian Intelligence System</div></div><div class='card'><div class='card-title'>Mission Briefing</div><p><strong>ID:</strong> {{ $json.mission_id }}</p><p style='margin-top:8px'><strong>Request:</strong> {{ $json.raw_input }}</p><p style='margin-top:8px'><strong>Interpretation:</strong> {{ $json.operator_briefing }}</p><p style='margin-top:8px'><strong>Mode:</strong> {{ $json.selected_mode }} &mdash; {{ $json.mode_reasoning }}</p><p style='margin-top:8px'><strong>Duration:</strong> {{ $json.estimated_duration }}</p></div><div class='card'><div class='card-title'>Risk Assessment</div><div class='risk-{{ $json.overall_risk.toLowerCase() }}'>{{ $json.overall_risk }}</div><p style='color:#888;margin-top:8px'>{{ $json.threat_context }}</p></div><div class='card'><div class='card-title'>Execution Plan — Steps Needing Approval Are Red</div>{{ $json.execution_plan.map(s=>`<div class='step ${s.autonomy==='CONFIRM_REQUIRED'?'confirm':''}'><strong>Step ${s.step} [${s.phase}]</strong> ${s.autonomy==='CONFIRM_REQUIRED'?'🔴 APPROVAL REQUIRED':' AUTO'}<br/>${s.action}<div class='step-meta'>Risk: ${s.risk_score}/100 &bull; ${s.risk_reason} ${s.mitre_technique?'&bull; MITRE: '+s.mitre_technique:''}</div></div>`).join('') }}</div><div class='card'><div class='card-title'>Starting Automatically (Low Risk)</div><ul style='padding-left:20px'>{{ $json.immediate_actions.map(a=>`<li style='margin:6px 0'>${a}</li>`).join('') }}</ul></div><div style='text-align:center;padding:24px'><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=YES&token={{ $json.mission_id }}_{{ Date.now() }}' class='btn btn-yes'>✅ APPROVE MISSION</a><a href='https://YOUR_N8N_URL/webhook/aegis/approve?mission={{ $json.mission_id }}&decision=NO&token={{ $json.mission_id }}_{{ Date.now() }}' class='btn btn-no'>❌ DENY MISSION</a></div><div class='footer'>AEGIS ELITE v2.0 &bull; {{ $json.timestamp }} &bull; {{ $json.mission_id }}</div></div></body></html>"
       },
       "id": "n024",
       "name": "📧 Send Approval Email",
@@ -372,7 +372,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{intel_run_id:'INTEL-'+Date.now(),timestamp:new Date().toISOString(),org_domain:md.org_domain||'YOUR_COMPANY.com',mission_id:md.mission_id||'SCHEDULED',trigger:md.trigger||'SCHEDULED',targets:md.extracted_targets||md.targets||[md.org_domain||'YOUR_COMPANY.com'],findings:[],critical_findings:[]}}];"
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{intel_run_id:'INTEL-'+Date.now(),timestamp:new Date().toISOString(),org_domain:md.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com',mission_id:md.mission_id||'SCHEDULED',trigger:md.trigger||'SCHEDULED',targets:md.extracted_targets||md.targets||[md.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com'],findings:[],critical_findings:[]}}];"
       },
       "id": "n030",
       "name": "🟡 Init Intel Run",
@@ -385,7 +385,7 @@
     },
     {
       "parameters": {
-        "url": "=https://haveibeenpwned.com/api/v3/breachedaccount/{{ $json.org_domain }}",
+        "url": "=https://haveibeenpwned.com/api/v3/breaches?domain={{ $json.org_domain }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -846,7 +846,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{attack_run_id:'ATTACK-'+Date.now(),mission_id:md.mission_id||'SCHEDULED',org_domain:md.org_domain||'YOUR_COMPANY.com',targets:md.extracted_targets||md.targets||[md.org_domain||'YOUR_COMPANY.com'],intel_findings:md.intel_findings||[],trigger:md.trigger||'SCHEDULED',timestamp:new Date().toISOString(),phase:'RECON',vulnerabilities:[],confirmed_exploits:[],attack_paths:[]}}];"
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nreturn [{json:{attack_run_id:'ATTACK-'+Date.now(),mission_id:md.mission_id||'SCHEDULED',org_domain:md.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com',targets:md.extracted_targets||md.targets||[md.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com'],intel_findings:md.intel_findings||[],trigger:md.trigger||'SCHEDULED',timestamp:new Date().toISOString(),phase:'RECON',vulnerabilities:[],confirmed_exploits:[],attack_paths:[]}}];"
       },
       "id": "n060",
       "name": "🔴 Init Attack Run",
@@ -1136,7 +1136,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nconst alert=body.alert||body;\nconst iid='INC-'+Date.now();\nreturn [{json:{incident_id:iid,timestamp:new Date().toISOString(),source:md.trigger||alert.manager?.name||'UNKNOWN',trigger_type:md.trigger||'ALERT',org_domain:md.org_domain||alert.org_domain||'YOUR_COMPANY.com',alert_level:alert.rule?.level||md.final_risk_score||5,alert_description:alert.rule?.description||md.ai_analysis?.executive_summary||'Security event',source_ip:alert.data?.srcip||alert.source_ip||null,dest_ip:alert.data?.dstip||null,affected_user:alert.data?.dstuser||null,affected_host:alert.agent?.name||null,raw_alert:JSON.stringify(alert).substring(0,2000),attack_results:md.attack_results||null,critical_vulns:md.attack_results?.scan_results?.critical_vulns||[],enrichment:{},phase:'ENRICHING'}}];"
+        "jsCode": "const body=$input.first().json.body||$input.first().json;\nconst md=body.mission_data?JSON.parse(body.mission_data):body;\nconst alert=body.alert||body;\nconst iid='INC-'+Date.now();\nreturn [{json:{incident_id:iid,timestamp:new Date().toISOString(),source:md.trigger||alert.manager?.name||'UNKNOWN',trigger_type:md.trigger||'ALERT',org_domain:md.org_domain||alert.org_domain||'CONFIGURE_YOUR_DOMAIN.example.com',alert_level:alert.rule?.level||md.final_risk_score||5,alert_description:alert.rule?.description||md.ai_analysis?.executive_summary||'Security event',source_ip:alert.data?.srcip||alert.source_ip||null,dest_ip:alert.data?.dstip||null,affected_user:alert.data?.dstuser||null,affected_host:alert.agent?.name||null,raw_alert:JSON.stringify(alert).substring(0,2000),attack_results:md.attack_results||null,critical_vulns:md.attack_results?.scan_results?.critical_vulns||[],enrichment:{},phase:'ENRICHING'}}];"
       },
       "id": "n080",
       "name": "🔵 Init Defend Run",
@@ -1308,7 +1308,6 @@
     {
       "parameters": {
         "url": "=https://threatfox-api.abuse.ch/api/v1/",
-        "requestMethod": "POST",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -1329,7 +1328,8 @@
             }
           },
           "timeout": 10000
-        }
+        },
+        "method": "POST"
       },
       "id": "n087",
       "name": "🦊 ThreatFox IOC Check",
@@ -1365,7 +1365,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const alert=$('🔵 Init Defend Run').first().json;\nconst en={};\n\ntry{const ab=$('🛡️ AbuseIPDB Check').first().json;\nif(ab.data){en.abuseipdb={abuse_score:ab.data.abuseConfidenceScore,country:ab.data.countryCode,isp:ab.data.isp,usage_type:ab.data.usageType,total_reports:ab.data.totalReports,is_tor:ab.data.isTor};}}catch(e){}\n\ntry{const vt=$('🦠 VirusTotal IP').first().json;\nif(vt.data?.attributes){en.virustotal={malicious:vt.data.attributes.last_analysis_stats?.malicious||0,suspicious:vt.data.attributes.last_analysis_stats?.suspicious||0,reputation:vt.data.attributes.reputation,as_owner:vt.data.attributes.as_owner};}}catch(e){}\n\ntry{const geo=$('🌍 IP Geolocation').first().json;\nen.geolocation={city:geo.city,region:geo.region,country:geo.country_name,country_code:geo.country_code,org:geo.org,timezone:geo.timezone};}catch(e){}\n\ntry{const otx=$('👽 OTX IP Intel').first().json;\nif(otx.pulse_info){en.otx={pulse_count:otx.pulse_info.count,reputation:otx.reputation};}}catch(e){}\n\ntry{const sh=$('🔍 Shodan IP Context').first().json;\nif(sh.ports){en.shodan={ports:sh.ports,org:sh.org,isp:sh.isp,is_scanner:(sh.tags||[]).includes('scanner'),os:sh.os,country:sh.country_name};}}catch(e){}\n\ntry{const tf=$('🦊 ThreatFox IOC Check').first().json;\nif(tf.data&&tf.data.length>0){en.threatfox={malware_family:tf.data[0].malware_printable,threat_type:tf.data[0].threat_type,confidence:tf.data[0].confidence_level};}}catch(e){}\n\ntry{const feodo=$('💀 Feodo C2 Blocklist').first().json;\nif(Array.isArray(feodo)){const match=feodo.find(e=>e.ip_address===alert.source_ip);\nif(match){en.feodo={is_c2:true,malware:match.malware,status:match.status,first_seen:match.first_seen};}}}catch(e){}\n\nconst score=Math.min(100,\n  (en.abuseipdb?.abuse_score||0)+\n  (en.virustotal?.malicious||0)*5+\n  (en.otx?.pulse_count||0)>0?20:0+\n  (en.abuseipdb?.is_tor?30:0)+\n  (en.threatfox?.malware_family?40:0)+\n  (en.feodo?.is_c2?50:0));\n\nconst level=score>=80?'CRITICAL':score>=60?'HIGH':score>=30?'MEDIUM':'LOW';\n\nreturn [{json:{...alert,enrichment:en,composite_threat_score:score,threat_level:level,is_known_malicious:score>=60,is_c2_server:!!en.feodo?.is_c2,is_known_malware:!!en.threatfox?.malware_family,phase:'TRIAGING'}}];"
+        "jsCode": "const alert=$('🔵 Init Defend Run').first().json;\nconst en={};\n\ntry{const ab=$('🛡️ AbuseIPDB Check').first().json;\nif(ab.data){en.abuseipdb={abuse_score:ab.data.abuseConfidenceScore,country:ab.data.countryCode,isp:ab.data.isp,usage_type:ab.data.usageType,total_reports:ab.data.totalReports,is_tor:ab.data.isTor};}}catch(e){}\n\ntry{const vt=$('🦠 VirusTotal IP').first().json;\nif(vt.data?.attributes){en.virustotal={malicious:vt.data.attributes.last_analysis_stats?.malicious||0,suspicious:vt.data.attributes.last_analysis_stats?.suspicious||0,reputation:vt.data.attributes.reputation,as_owner:vt.data.attributes.as_owner};}}catch(e){}\n\ntry{const geo=$('🌍 IP Geolocation').first().json;\nen.geolocation={city:geo.city,region:geo.region,country:geo.country_name,country_code:geo.country_code,org:geo.org,timezone:geo.timezone};}catch(e){}\n\ntry{const otx=$('👽 OTX IP Intel').first().json;\nif(otx.pulse_info){en.otx={pulse_count:otx.pulse_info.count,reputation:otx.reputation};}}catch(e){}\n\ntry{const sh=$('🔍 Shodan IP Context').first().json;\nif(sh.ports){en.shodan={ports:sh.ports,org:sh.org,isp:sh.isp,is_scanner:(sh.tags||[]).includes('scanner'),os:sh.os,country:sh.country_name};}}catch(e){}\n\ntry{const tf=$('🦊 ThreatFox IOC Check').first().json;\nif(tf.data&&tf.data.length>0){en.threatfox={malware_family:tf.data[0].malware_printable,threat_type:tf.data[0].threat_type,confidence:tf.data[0].confidence_level};}}catch(e){}\n\ntry{const feodo=$('💀 Feodo C2 Blocklist').first().json;\nif(Array.isArray(feodo)){const match=feodo.find(e=>e.ip_address===alert.source_ip);\nif(match){en.feodo={is_c2:true,malware:match.malware,status:match.status,first_seen:match.first_seen};}}}catch(e){}\n\nconst score=Math.min(100,\n  (en.abuseipdb?.abuse_score||0)+\n  ((en.virustotal?.malicious||0)*5)+\n  ((en.otx?.pulse_count||0)>0?20:0)+\n  (en.abuseipdb?.is_tor?30:0)+\n  (en.threatfox?.malware_family?40:0)+\n  (en.feodo?.is_c2?50:0));\n\nconst level=score>=80?'CRITICAL':score>=60?'HIGH':score>=30?'MEDIUM':'LOW';\n\nreturn [{json:{...alert,enrichment:en,composite_threat_score:score,threat_level:level,is_known_malicious:score>=60,is_c2_server:!!en.feodo?.is_c2,is_known_malware:!!en.threatfox?.malware_family,phase:'TRIAGING'}}];"
       },
       "id": "n090",
       "name": "📊 Aggregate Enrichment",
@@ -1469,7 +1469,6 @@
     {
       "parameters": {
         "url": "=https://api.abuseipdb.com/api/v2/report",
-        "requestMethod": "POST",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -1506,7 +1505,8 @@
               "neverError": true
             }
           }
-        }
+        },
+        "method": "POST"
       },
       "id": "n095",
       "name": "🚫 Auto-Block IP",
@@ -1617,7 +1617,6 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpQueryAuth",
         "url": "=https://api.telegram.org/bot{{ $credentials.telegramBotToken }}/sendMessage",
-        "requestMethod": "POST",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -1641,7 +1640,8 @@
               "neverError": true
             }
           }
-        }
+        },
+        "method": "POST"
       },
       "id": "n099",
       "name": "📱 Telegram Alert",
@@ -1831,7 +1831,6 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpQueryAuth",
         "url": "=https://api.telegram.org/bot{{ $credentials.telegramBotToken }}/sendMessage",
-        "requestMethod": "POST",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -1855,7 +1854,8 @@
               "neverError": true
             }
           }
-        }
+        },
+        "method": "POST"
       },
       "id": "n115",
       "name": "📱 Telegram: Report",
@@ -1944,7 +1944,7 @@
     },
     {
       "parameters": {
-        "url": "=https://haveibeenpwned.com/api/v3/breachedaccount/{{ $json.org_domain }}",
+        "url": "=https://haveibeenpwned.com/api/v3/breaches?domain={{ $json.org_domain }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
