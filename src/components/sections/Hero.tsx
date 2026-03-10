@@ -20,10 +20,10 @@ export default function Hero() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   return (
-    <section ref={containerRef} className="relative min-h-screen pt-40 pb-20 overflow-hidden flex flex-col items-center justify-center">
+    <section ref={containerRef} className="relative min-h-screen pt-48 pb-32 overflow-hidden flex flex-col items-center justify-center">
       {/* Background Ambient Orbs */}
       <motion.div
         animate={{
@@ -33,7 +33,7 @@ export default function Hero() {
           y: [0, -20, 0]
         }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[10%] left-[10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[150px] pointer-events-none"
+        className="absolute top-[10%] left-[10%] w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] pointer-events-none"
       />
       <motion.div
         animate={{
@@ -43,7 +43,7 @@ export default function Hero() {
           y: [0, 30, 0]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[10%] right-[10%] w-[700px] h-[700px] bg-accent-blue/20 rounded-full blur-[130px] pointer-events-none"
+        className="absolute bottom-[10%] right-[10%] w-[700px] h-[700px] bg-accent-blue/10 rounded-full blur-[130px] pointer-events-none"
       />
 
       <motion.div
@@ -59,7 +59,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-10"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-12"
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">
@@ -67,42 +67,42 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          <h1 className="text-6xl md:text-[7.5rem] font-bold tracking-tighter mb-10 leading-[0.9] max-w-6xl mx-auto font-satoshi">
-            Your SOC. <br />
+          <h1 className="text-6xl md:text-[8.5rem] font-bold tracking-tighter mb-12 leading-[0.85] max-w-7xl mx-auto font-satoshi">
+            SecOps. <br />
             <span className="text-muted/20 italic">Fully Autonomous.</span>
           </h1>
 
-          <p className="text-muted text-xl md:text-2xl max-w-3xl mx-auto mb-16 leading-relaxed font-medium">
-            Replace your $2.4M enterprise SOC with AI agents that never sleep,
-            never miss, and never stop protecting your critical infrastructure.
+          <p className="text-muted text-xl md:text-2xl max-w-3xl mx-auto mb-20 leading-relaxed font-medium">
+            The first end-to-end platform for world-class security teams.
+            Automate triage, investigation, and response at machine speed.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-32">
-            <MagneticButton className="w-full sm:w-auto px-12 py-6 text-base shadow-[0_20px_40px_rgba(201,169,98,0.2)]">
-              Initialize AEGIS
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-10 mb-40">
+            <MagneticButton className="w-full sm:w-auto px-16 py-8 text-base shadow-[0_20px_40px_rgba(59,130,246,0.2)] bg-primary text-white hover:bg-primary/90 rounded-2xl">
+              Start Free Trial
             </MagneticButton>
-            <MagneticButton variant="outline" className="w-full sm:w-auto px-12 py-6 text-base">
-              System Architecture
+            <MagneticButton variant="outline" className="w-full sm:w-auto px-16 py-8 text-base border-white/10 hover:bg-white/5 rounded-2xl">
+              Book a Demo
             </MagneticButton>
           </div>
         </motion.div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.8 + (index * 0.1), ease: [0.16, 1, 0.3, 1] }}
-              className="glass p-10 rounded-3xl relative group overflow-hidden border border-glass-border/30 hover:border-primary/20 transition-colors duration-500"
+              className="glass p-12 rounded-[2.5rem] relative group overflow-hidden border border-glass-border/30 hover:border-primary/20 transition-all duration-700 hover:shadow-[0_20px_60px_rgba(59,130,246,0.1)]"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
               <div className="relative z-10">
-                <div className="text-primary text-4xl md:text-5xl font-bold mb-3 font-mono tracking-tighter">
+                <div className="text-primary text-5xl md:text-6xl font-bold mb-4 font-mono tracking-tighter">
                   {stat.value}
                 </div>
-                <div className="text-muted text-[10px] uppercase tracking-[0.3em] font-black">
+                <div className="text-muted text-[10px] uppercase tracking-[0.4em] font-black">
                   {stat.label}
                 </div>
               </div>
@@ -112,7 +112,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Decorative Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10" />
     </section>
   );
 }

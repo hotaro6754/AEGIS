@@ -10,21 +10,21 @@ export default function Logo({ className = "" }: { className?: string }) {
           <path
             d="M50 5L10 25V55C10 75 50 95 50 95C50 95 90 75 90 55V25L50 5Z"
             fill="#0A0A0B"
-            stroke="#C9A962"
+            stroke="var(--primary)"
             strokeWidth="3"
           />
           <motion.circle
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 2, repeat: Infinity }}
-            cx="50" cy="40" r="12" fill="#C9A962" fillOpacity="0.2"
+            cx="50" cy="40" r="12" fill="var(--primary)" fillOpacity="0.2"
           />
-          <circle cx="50" cy="40" r="4" fill="#C9A962" />
+          <circle cx="50" cy="40" r="4" fill="var(--primary)" />
         </svg>
         <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse" />
       </div>
       <div className="flex flex-col">
         <span className="text-xl font-black tracking-[0.3em] text-foreground leading-none">AEGIS</span>
-        <span className="text-[8px] font-black tracking-[0.5em] text-primary leading-none mt-1">ELITE</span>
+        <span className="text-[8px] font-black tracking-[0.5em] text-primary leading-none mt-1 uppercase tracking-[0.5em]">Elite</span>
       </div>
     </div>
   );

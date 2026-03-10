@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield, Search, Zap, CheckCircle2, FileText, Lock } from "lucide-react";
 
 const capabilities = [
   {
@@ -11,8 +12,8 @@ const capabilities = [
     description: "Natural language control over your entire security operations. Replace complex CLI commands with intuitive intent.",
     example: "run our monthly pentest",
     result: "Full red team engaged",
-    icon: "◉",
-    color: "#C9A962",
+    icon: <Zap className="w-8 h-8" />,
+    color: "#3B82F6",
   },
   {
     id: "intel",
@@ -21,8 +22,8 @@ const capabilities = [
     description: "Aggregates data from 15+ sources including Shodan, AlienVault, and HaveIBeenPwned in real-time.",
     example: "check api.company.com",
     result: "15 sources scanned in 4.2s",
-    icon: "◈",
-    color: "#7DD3FC",
+    icon: <Search className="w-8 h-8" />,
+    color: "#0070F3",
   },
   {
     id: "attack",
@@ -31,7 +32,7 @@ const capabilities = [
     description: "No proof, no report. AEGIS only surfaces vulnerabilities it has actively validated against your infrastructure.",
     example: "find exposed secrets",
     result: "3 secrets found and verified",
-    icon: "▲",
+    icon: <TargetIcon />,
     color: "#F5F5F7",
   },
   {
@@ -41,8 +42,8 @@ const capabilities = [
     description: "Autonomous triage of incoming alerts with automated IP blocking and incident escalation.",
     example: "triage suspicious login",
     result: "Confirmed TP - IP blocked",
-    icon: "■",
-    color: "#C9A962",
+    icon: <Shield className="w-8 h-8" />,
+    color: "#3B82F6",
   },
   {
     id: "compliance",
@@ -51,8 +52,8 @@ const capabilities = [
     description: "Automated auditing for SOC2, ISO 27001, GDPR, and HIPAA. Always ready for your next audit.",
     example: "generate soc2 report",
     result: "Compliance audit complete",
-    icon: "⬡",
-    color: "#7DD3FC",
+    icon: <Lock className="w-8 h-8" />,
+    color: "#0070F3",
   },
   {
     id: "reporting",
@@ -61,198 +62,130 @@ const capabilities = [
     description: "Weekly executive summaries delivered automatically to stakeholders, translating technical risk into business impact.",
     example: "weekly summary",
     result: "Report delivered to CISO",
-    icon: "◇",
+    icon: <FileText className="w-8 h-8" />,
     color: "#F5F5F7",
   },
 ];
 
+function TargetIcon() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
 export default function Capabilities() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % capabilities.length);
-  };
-
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + capabilities.length) % capabilities.length);
-  };
-
-  const onDragEnd = (event: any, info: PanInfo) => {
-    if (info.offset.x < -100) {
-      handleNext();
-    } else if (info.offset.x > 100) {
-      handlePrev();
-    }
-  };
-
-  const activeTab = capabilities[currentIndex];
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <section className="py-40 relative bg-background">
+    <section className="py-60 relative bg-background">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-24"
+          className="text-center mb-32"
         >
-          <span className="text-primary text-xs font-medium tracking-[0.3em] uppercase mb-6 block">
-            The AEGIS Platform
+          <span className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-8 block">
+            Capabilities
           </span>
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 font-satoshi tracking-tight">
-            Six specialized AI agents. <br />
-            <span className="text-muted/40 italic">One unified command.</span>
+          <h2 className="text-5xl md:text-7xl font-bold mb-10 font-satoshi tracking-tight">
+            Six Specialized Agents. <br />
+            <span className="text-muted/40 italic">One Unified Command.</span>
           </h2>
         </motion.div>
 
-        <div className="max-w-6xl mx-auto relative group">
-          {/* Progress Indicators */}
-          <div className="flex justify-center gap-3 mb-12">
-            {capabilities.map((_, index) => (
-              <motion.button
-                key={index}
-                onClick={() => {
-                  setDirection(index > currentIndex ? 1 : -1);
-                  setCurrentIndex(index);
-                }}
-                className={`h-1 rounded-full transition-all duration-500 ${
-                  index === currentIndex ? "w-12 bg-primary" : "w-4 bg-glass-border hover:bg-muted"
-                }`}
-              />
-            ))}
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Navigation Grid */}
+          <div className="lg:col-span-4 grid grid-cols-1 gap-4">
+             {capabilities.map((item, index) => (
+               <button
+                 key={item.id}
+                 onClick={() => setActiveTab(index)}
+                 className={`group p-8 rounded-3xl border text-left transition-all duration-500 ${
+                   activeTab === index
+                   ? "bg-white/[0.03] border-primary/40 shadow-[0_20px_50px_rgba(59,130,246,0.1)]"
+                   : "bg-transparent border-glass-border/40 hover:border-white/20"
+                 }`}
+               >
+                 <div className="flex items-center gap-6">
+                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
+                     activeTab === index ? "bg-primary text-white" : "bg-white/5 text-muted group-hover:bg-white/10"
+                   }`}>
+                     {item.icon}
+                   </div>
+                   <div>
+                     <h4 className={`font-bold text-lg transition-colors duration-500 font-satoshi ${
+                       activeTab === index ? "text-foreground" : "text-muted"
+                     }`}>
+                       {item.title}
+                     </h4>
+                     <p className={`text-[10px] uppercase tracking-widest font-black transition-colors duration-500 ${
+                       activeTab === index ? "text-primary/80" : "text-muted/40"
+                     }`}>
+                       {item.subtitle}
+                     </p>
+                   </div>
+                 </div>
+               </button>
+             ))}
           </div>
 
-          <div className="relative overflow-visible min-h-[600px] flex items-center justify-center">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={{
-                  enter: (direction: number) => ({
-                    x: direction > 0 ? 300 : -300,
-                    opacity: 0,
-                    scale: 0.9,
-                    rotateY: direction > 0 ? 45 : -45,
-                  }),
-                  center: {
-                    x: 0,
-                    opacity: 1,
-                    scale: 1,
-                    rotateY: 0,
-                    zIndex: 1,
-                  },
-                  exit: (direction: number) => ({
-                    x: direction < 0 ? 300 : -300,
-                    opacity: 0,
-                    scale: 0.9,
-                    rotateY: direction < 0 ? 45 : -45,
-                    zIndex: 0,
-                  }),
-                }}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.4 },
-                  scale: { duration: 0.4 },
-                  rotateY: { duration: 0.5 }
-                }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={onDragEnd}
-                className="w-full absolute inset-0 cursor-grab active:cursor-grabbing"
-              >
-                <div className="glass rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_40px_100px_rgba(0,0,0,0.5)] border border-glass-border/50 h-full">
-                  <div className="w-full md:w-1/2 p-16 flex flex-col justify-center relative">
-                    <div className="absolute top-10 left-10 text-[12rem] font-black text-white/[0.02] pointer-events-none font-satoshi">
-                      0{currentIndex + 1}
-                    </div>
+          {/* Content Preview */}
+          <div className="lg:col-span-8 relative">
+             <AnimatePresence mode="wait">
+               <motion.div
+                 key={activeTab}
+                 initial={{ opacity: 0, scale: 0.95, x: 20 }}
+                 animate={{ opacity: 1, scale: 1, x: 0 }}
+                 exit={{ opacity: 0, scale: 0.95, x: -20 }}
+                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                 className="h-full glass rounded-[3rem] p-16 flex flex-col justify-center border border-primary/10 relative overflow-hidden group"
+               >
+                 {/* Background Accent */}
+                 <div
+                   className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-1000"
+                   style={{ background: `radial-gradient(circle at center, ${capabilities[activeTab].color} 0%, transparent 70%)` }}
+                 />
 
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <div className="text-primary text-5xl mb-8">{activeTab.icon}</div>
-                      <h3 className="text-4xl font-bold mb-6 uppercase tracking-tighter font-satoshi">{activeTab.title}</h3>
-                      <p className="text-muted text-xl mb-12 leading-relaxed">
-                        {activeTab.description}
-                      </p>
+                 <div className="relative z-10">
+                   <div className="text-primary mb-12 transform group-hover:scale-110 transition-transform duration-700">
+                     {capabilities[activeTab].icon}
+                   </div>
+                   <h3 className="text-5xl font-bold mb-8 font-satoshi tracking-tight">
+                     {capabilities[activeTab].title}
+                   </h3>
+                   <p className="text-muted text-2xl mb-16 leading-relaxed max-w-2xl">
+                     {capabilities[activeTab].description}
+                   </p>
 
-                      <div className="space-y-6">
-                        <div className="bg-background/80 backdrop-blur-md p-6 rounded-xl border border-glass-border font-mono text-base group">
-                          <span className="text-primary mr-3">$</span>
-                          <span className="text-foreground">aegis --mission "{activeTab.example}"</span>
-                        </div>
-                        <div className="flex items-center gap-4 text-base text-success/80">
-                          <div className="w-6 h-6 rounded-full border border-success/30 flex items-center justify-center text-[10px]">✓</div>
-                          <span className="font-mono tracking-tight">{activeTab.result}</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
+                   <div className="space-y-8">
+                     <div className="bg-black/40 backdrop-blur-xl p-8 rounded-2xl border border-glass-border font-mono text-lg flex items-center shadow-2xl">
+                       <span className="text-primary mr-6 font-black">$</span>
+                       <span className="text-foreground/90 tracking-tight">aegis --mission &quot;{capabilities[activeTab].example}&quot;</span>
+                     </div>
+                     <div className="flex items-center gap-6 text-lg text-success font-medium">
+                       <div className="w-8 h-8 rounded-full border border-success/30 flex items-center justify-center bg-success/5 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                         <CheckCircle2 className="w-5 h-5" />
+                       </div>
+                       <span className="font-mono tracking-tight uppercase tracking-widest text-sm font-black">
+                         {capabilities[activeTab].result}
+                       </span>
+                     </div>
+                   </div>
+                 </div>
 
-                  <div className="w-full md:w-1/2 bg-gradient-to-br from-tertiary/20 to-secondary/10 p-16 flex items-center justify-center relative overflow-hidden">
-                    {/* Abstract Visuals */}
-                    <div
-                      className="absolute inset-0 opacity-20"
-                      style={{ background: `radial-gradient(circle at center, ${activeTab.color} 0%, transparent 70%)` }}
-                    />
-
-                    <motion.div
-                      animate={{
-                        y: [0, -20, 0],
-                        rotate: [0, 5, 0]
-                      }}
-                      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                      className="relative z-10 w-full aspect-square max-w-[380px] glass rounded-3xl flex items-center justify-center border-2 border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.3)]"
-                    >
-                      <div
-                        className="text-8xl font-bold opacity-40 filter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                        style={{ color: activeTab.color }}
-                      >
-                        {activeTab.icon}
-                      </div>
-
-                      {/* Animated Geometric Ornaments */}
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-[-40px] border border-white/5 rounded-[3rem]"
-                      />
-                      <motion.div
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-[-80px] border border-white/5 rounded-full border-dashed"
-                      />
-                    </motion.div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="absolute -left-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:block">
-            <button
-              onClick={handlePrev}
-              className="w-16 h-16 rounded-full glass border border-glass-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/50 transition-all text-2xl"
-            >
-              ←
-            </button>
-          </div>
-          <div className="absolute -right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:block">
-            <button
-              onClick={handleNext}
-              className="w-16 h-16 rounded-full glass border border-glass-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/50 transition-all text-2xl"
-            >
-              →
-            </button>
+                 {/* Corner Decoration */}
+                 <div className="absolute bottom-12 right-12 opacity-10 group-hover:opacity-30 transition-opacity duration-700">
+                    <span className="text-[12rem] font-black text-white font-satoshi leading-none pointer-events-none">
+                      0{activeTab + 1}
+                    </span>
+                 </div>
+               </motion.div>
+             </AnimatePresence>
           </div>
         </div>
       </div>
