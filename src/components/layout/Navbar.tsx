@@ -1,9 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, AnimatePresence } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 import MagneticButton from "@/components/ui/MagneticButton";
+
+const menuItems = [
+  { name: "Platform", href: "#capabilities" },
+  { name: "Architecture", href: "#architecture" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "Docs", href: "#docs" },
+];
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -17,37 +24,54 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? "py-4" : "py-8"
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        isScrolled ? "py-4" : "py-10"
       }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        <div className={`px-6 py-2 rounded-full transition-all duration-500 ${
-          isScrolled ? "glass" : "bg-transparent"
+      <div className="container mx-auto px-6 flex items-center justify-between relative">
+        {/* Left: Logo */}
+        <div className={`px-8 py-3 rounded-full transition-all duration-700 ${
+          isScrolled ? "glass border border-white/5" : "bg-transparent"
         }`}>
           <Logo />
         </div>
 
-        <div className={`hidden md:flex items-center gap-8 px-8 py-3 rounded-full transition-all duration-500 ${
-          isScrolled ? "glass" : "bg-transparent"
+        {/* Center: Menu */}
+        <div className={`hidden md:flex items-center gap-10 px-12 py-4 rounded-full transition-all duration-700 ${
+          isScrolled ? "glass border border-white/5 shadow-2xl" : "bg-transparent"
         }`}>
-          {["Products", "Solutions", "Pricing", "Docs"].map((item) => (
+          {menuItems.map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+              key={item.name}
+              href={item.href}
+              className="text-[11px] font-black uppercase tracking-[0.3em] text-muted hover:text-primary transition-all duration-300"
             >
-              {item}
+              {item.name}
             </a>
           ))}
         </div>
 
-        <MagneticButton variant="outline" className="px-6 py-2 text-sm hidden sm:block">
-          Request Demo
-        </MagneticButton>
+        {/* Right: CTA */}
+        <div className="hidden sm:block">
+          <MagneticButton variant="outline" className="px-10 py-3 text-[10px] font-black uppercase tracking-[0.3em]">
+            Request Access
+          </MagneticButton>
+        </div>
+
+        {/* Backdrop for mobile (Blurry overlay when scrolled) */}
+        <AnimatePresence>
+          {isScrolled && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-x-0 -top-10 -bottom-10 -z-10 backdrop-blur-md bg-black/40 pointer-events-none [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]"
+            />
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   );
