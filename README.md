@@ -61,7 +61,7 @@
 
 ## 🛡️ What is AEGIS ELITE?
 
-**AEGIS ELITE** is a fully autonomous, AI-native cybersecurity operations platform — a 111-node n8n workflow that combines 6 specialized Claude AI agents, 15+ threat intelligence sources, and 12 enterprise security layers to deliver **red team, blue team, OSINT, compliance auditing, and executive reporting** — all triggered by a single natural language command.
+**AEGIS ELITE** is a fully autonomous, AI-native cybersecurity operations platform — an agentic ai workflow that combines 6 specialized autonomous AI agents, threat intelligence sources, and 12 enterprise security layers to deliver **red team, blue team, OSINT, compliance auditing, and executive reporting** — all triggered by a single natural language command.
 
 Unlike traditional security tools that require expert configuration, dedicated personnel, and weeks of onboarding, AEGIS ELITE understands plain English. Tell it `"we are being attacked from 185.x.x.x"` and it launches a live incident response. Tell it `"run our monthly pentest"` and a full red team engagement begins in seconds.
 
